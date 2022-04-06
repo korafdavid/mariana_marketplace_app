@@ -1,7 +1,35 @@
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
+import 'package:appwrite/appwrite.dart';
+import 'secrets.dart';
+
+Client appwriteClient = Client();
 
 void main() {
   runApp(const MyApp());
+
+  appwriteClient
+      .setEndpoint('https://appwrite.saipan.life/v1') // Your Appwrite Endpoint
+      .setProject(appwriteProjectID) // Your project ID
+      .setSelfSigned(status: false);
+
+  //registerAccount('evoteccit@gmail.com', 'SuperAwesomeLad'); //Disabled for testing
+}
+
+void registerAccount(String aEmail, String aPassword) {
+  Account account = Account(appwriteClient);
+
+  Future result = account.create(
+    userId: 'unique()',
+    email: aEmail,
+    password: aPassword,
+  );
+
+  result.then((response) {
+    print(response);
+  }).catchError((error) {
+    print(error.response);
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -130,7 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           alignment: FractionalOffset.bottomCenter,
                           child: Text(
                             'Cars $_counter',
-                            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -161,7 +190,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           alignment: FractionalOffset.bottomCenter,
                           child: Text(
                             'Classified $_counter',
-                            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
