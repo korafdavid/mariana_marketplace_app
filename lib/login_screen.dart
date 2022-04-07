@@ -67,18 +67,59 @@ class LoginScreen extends StatelessWidget {
         .setSelfSigned(status: false);
 
     return FlutterLogin(
-      title: 'Mariana\nMarketplace',
-      //logo: AssetImage('assets/images/ecorp-lightblue.png'),
+        title: 'Mariana\nMarketplace',
+        //logo: AssetImage('assets/images/ecorp-lightblue.png'),
 
-      onLogin: _authUser,
-      onSignup: _signupUser,
-      onSubmitAnimationCompleted: () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) =>
-              const LandingScreen(title: 'Mariana Marketplace'),
-        ));
-      },
-      onRecoverPassword: _recoverPassword,
-    );
+        onLogin: _authUser,
+        onSignup: _signupUser,
+        onSubmitAnimationCompleted: () {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) =>
+                const LandingScreen(title: 'Mariana Marketplace'),
+          ));
+        },
+        onRecoverPassword: _recoverPassword,
+        additionalSignupFields: const [
+          UserFormField(
+            keyName: "phonenumber",
+            displayName: "Phone Number",
+            userType: LoginUserType.phone,
+            icon: Icon(
+              Icons.phone,
+              color: Color.fromARGB(255, 0, 0, 0),
+              size: 24.0,
+              semanticLabel: 'Text to announce in accessibility modes',
+            ),
+          ),
+          UserFormField(
+            keyName: "birthday",
+            displayName: "Birthday",
+            icon: Icon(
+              Icons.cake,
+              color: Color.fromARGB(255, 0, 0, 0),
+              size: 24.0,
+              semanticLabel: 'Text to announce in accessibility modes',
+            ),
+          ),
+          UserFormField(
+            keyName: "island",
+            displayName: "Island",
+            icon: Icon(
+              Icons.landscape,
+              color: Color.fromARGB(255, 0, 0, 0),
+              size: 24.0,
+              semanticLabel: 'Text to announce in accessibility modes',
+            ),
+          ),
+          UserFormField(
+              keyName: "address",
+              displayName: "Address",
+              icon: Icon(
+                Icons.house,
+                color: Color.fromARGB(255, 0, 0, 0),
+                size: 24.0,
+                semanticLabel: 'Text to announce in accessibility modes',
+              )),
+        ]);
   }
 }
