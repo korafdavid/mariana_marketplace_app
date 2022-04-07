@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:mariana_marketplace/landing_screen.dart';
@@ -12,7 +15,7 @@ const users = const {
 Client appwriteClient = Client();
 
 class LoginScreen extends StatelessWidget {
-  Duration get loginTime => Duration(milliseconds: 2250);
+  Duration get loginTime => Duration(milliseconds: 2550);
 
   Future<String?> _authUser(LoginData data) {
     debugPrint('Name: ${data.name}, Password: ${data.password}');
@@ -27,25 +30,133 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
-  Future<String?> _signupUser(SignupData data) {
-    debugPrint('Signup Name: ${data.name}, Password: ${data.password}');
-    return Future.delayed(loginTime).then((_) {
-      Account account = Account(appwriteClient);
+  Future<String?> _signupUser(SignupData data) async {
+    try {
+      //Sign up user
+      User signedUpUser = await registerUserAccount(data);
+      //Create session
+      Session createdSession =
+          await startUserSession(data.name!, data.password!);
+      //Create database entry for user
+      Document userInfoDocument = await createUserInfoEntry(
+          signedUpUser.$id,
+          signedUpUser.name,
+          signedUpUser.email,
+          data.additionalSignupData?["phone"] ?? "Missing",
+          data.additionalSignupData?["birthday"] ?? "Missing",
+          data.additionalSignupData?["address"] ?? "Missing",
+          data.additionalSignupData?["island"] ?? "Missing");
+      //Update user prefs
+      User updatedUser = await updateUserPrefs(
+          data.additionalSignupData?["phone"] ?? "Missing",
+          data.additionalSignupData?["birthday"] ?? "Missing",
+          data.additionalSignupData?["address"] ?? "Missing",
+          data.additionalSignupData?["island"] ?? "Missing");
 
-      Future result = account.create(
-        userId: 'unique()',
-        email: data.name!,
-        password: data.password!,
-      );
+      //Everything successfully completed above, return null so caller knows we succeeded
+      return null;
+    } catch (e) {
+      final String errorString =
+          "Did not complete user signup fully, erorr: " + e.toString();
+      debugPrint(errorString);
+      return "Could not complete user signup";
+    }
+  }
 
-      result.then((response) {
-        print(response);
-        return response;
-      }).catchError((error) {
-        print(error.response);
-        return error.response;
-      });
-    });
+  Future<User> registerUserAccount(SignupData data) {
+    Account account = Account(appwriteClient);
+
+    Future<User> result = account.create(
+      userId: 'unique()',
+      email: data.name!,
+      password: data.password!,
+    );
+
+    return result;
+
+    //result.then((response) {
+    //  print("Response for registerUserAccount was: " + response.toString());
+    //  return response;
+    //}).catchError((error) {
+    //  print(error.response);
+    //  return error.response;
+    //});
+  }
+
+  Future<Session> startUserSession(String anEmail, String anPassword) async {
+    Account account = Account(appwriteClient);
+
+    Future<Session> result = account.createSession(
+      email: anEmail,
+      password: anPassword,
+    );
+
+    return result;
+    //result
+    //  .then((response) {
+    //    print(response);
+    //  }).catchError((error) {
+    //    print(error.response);
+    //});
+  }
+
+  Future<Document> createUserInfoEntry(
+      String anAccountID,
+      String anName,
+      String anEmail,
+      String anPhone,
+      String anBirthday,
+      String anAddress,
+      String anIsland) {
+    // Init SDK
+    Database database = Database(appwriteClient);
+
+    Future<Document> result = database.createDocument(
+        collectionId: accountDetailsCollectionID,
+        documentId: 'unique()',
+        data: {
+          "account_id": anAccountID,
+          "name": anName,
+          "email": anEmail,
+          "phone": anPhone,
+          "birthday": anBirthday,
+          "address": anAddress,
+          "island": anIsland
+        });
+
+    return result;
+
+    //result.then((response) {
+    //  print(response);
+    //  return response;
+    //}).catchError((error) {
+    //  print(error.response);
+    //  return error.response;
+    //});
+  }
+
+  Future<User> updateUserPrefs(
+      String anPhone, String anBirthday, String anAddress, String anIsland) {
+    // Init SDK
+    Account account = Account(appwriteClient);
+
+    Future<User> result = account.updatePrefs(
+      prefs: {
+        "phone": anPhone,
+        "birthday": anBirthday,
+        "address": anAddress,
+        "island": anIsland
+      },
+    );
+
+    return result;
+
+    //result
+    //  .then((response) {
+    //    print(response);
+    //  }).catchError((error) {
+    //    print(error.response);
+    //});
   }
 
   Future<String?> _recoverPassword(String name) {
@@ -61,8 +172,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     appwriteClient
-        .setEndpoint(
-            'https://appwrite.saipan.life/v1') // Your Appwrite Endpoint
+        .setEndpoint(appwriteEndpoint) // Your Appwrite Endpoint
         .setProject(appwriteProjectID) // Your project ID
         .setSelfSigned(status: false);
 
@@ -81,12 +191,11 @@ class LoginScreen extends StatelessWidget {
         onRecoverPassword: _recoverPassword,
         additionalSignupFields: const [
           UserFormField(
-            keyName: "phonenumber",
+            keyName: "phone",
             displayName: "Phone Number",
             userType: LoginUserType.phone,
             icon: Icon(
               Icons.phone,
-              color: Color.fromARGB(255, 0, 0, 0),
               size: 24.0,
               semanticLabel: 'Text to announce in accessibility modes',
             ),
@@ -96,7 +205,6 @@ class LoginScreen extends StatelessWidget {
             displayName: "Birthday",
             icon: Icon(
               Icons.cake,
-              color: Color.fromARGB(255, 0, 0, 0),
               size: 24.0,
               semanticLabel: 'Text to announce in accessibility modes',
             ),
@@ -106,7 +214,6 @@ class LoginScreen extends StatelessWidget {
             displayName: "Island",
             icon: Icon(
               Icons.landscape,
-              color: Color.fromARGB(255, 0, 0, 0),
               size: 24.0,
               semanticLabel: 'Text to announce in accessibility modes',
             ),
@@ -116,7 +223,6 @@ class LoginScreen extends StatelessWidget {
               displayName: "Address",
               icon: Icon(
                 Icons.house,
-                color: Color.fromARGB(255, 0, 0, 0),
                 size: 24.0,
                 semanticLabel: 'Text to announce in accessibility modes',
               )),
