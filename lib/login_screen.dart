@@ -31,16 +31,24 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String?> _signupUser(SignupData data) async {
+    //Concat fullname
+    final String fullName = ((data.additionalSignupData?["firstname"] ?? "") +
+        " " +
+        (data.additionalSignupData?["lastname"] ?? ""));
+
     try {
       //Sign up user
       User signedUpUser = await registerUserAccount(data);
       //Create session
       Session createdSession =
           await startUserSession(data.name!, data.password!);
+      //Update user account name
+      User updatedAccountNameAccount = await updateAccountName(fullName);
       //Create database entry for user
       Document userInfoDocument = await createUserInfoEntry(
           signedUpUser.$id,
-          signedUpUser.name,
+          data.additionalSignupData?["firstname"] ?? "Missing",
+          data.additionalSignupData?["lastname"] ?? "Missing",
           signedUpUser.email,
           data.additionalSignupData?["phone"] ?? "Missing",
           data.additionalSignupData?["birthday"] ?? "Missing",
@@ -48,6 +56,8 @@ class LoginScreen extends StatelessWidget {
           data.additionalSignupData?["island"] ?? "Missing");
       //Update user prefs
       User updatedUser = await updateUserPrefs(
+          data.additionalSignupData?["firstname"] ?? "Missing",
+          data.additionalSignupData?["lastname"] ?? "Missing",
           data.additionalSignupData?["phone"] ?? "Missing",
           data.additionalSignupData?["birthday"] ?? "Missing",
           data.additionalSignupData?["address"] ?? "Missing",
@@ -102,7 +112,8 @@ class LoginScreen extends StatelessWidget {
 
   Future<Document> createUserInfoEntry(
       String anAccountID,
-      String anName,
+      String anFirstName,
+      String anLastName,
       String anEmail,
       String anPhone,
       String anBirthday,
@@ -116,7 +127,9 @@ class LoginScreen extends StatelessWidget {
         documentId: 'unique()',
         data: {
           "account_id": anAccountID,
-          "name": anName,
+          "name": anFirstName + " " + anLastName,
+          "firstname": anFirstName,
+          "lastname": anLastName,
           "email": anEmail,
           "phone": anPhone,
           "birthday": anBirthday,
@@ -135,13 +148,25 @@ class LoginScreen extends StatelessWidget {
     //});
   }
 
-  Future<User> updateUserPrefs(
+  Future<User> updateAccountName(String anName) {
+    Account account = Account(appwriteClient);
+
+    Future<User> result = account.updateName(
+      name: anName,
+    );
+
+    return result;
+  }
+
+  Future<User> updateUserPrefs(String anFirstName, String anLastName,
       String anPhone, String anBirthday, String anAddress, String anIsland) {
     // Init SDK
     Account account = Account(appwriteClient);
 
     Future<User> result = account.updatePrefs(
       prefs: {
+        "firstname": anFirstName,
+        "lastname": anLastName,
         "phone": anPhone,
         "birthday": anBirthday,
         "address": anAddress,
@@ -190,6 +215,24 @@ class LoginScreen extends StatelessWidget {
         },
         onRecoverPassword: _recoverPassword,
         additionalSignupFields: const [
+          UserFormField(
+            keyName: "firstname",
+            displayName: "First Name",
+            userType: LoginUserType.name,
+            icon: Icon(
+              Icons.person,
+              size: 24.0,
+              semanticLabel: 'Text to announce in accessibility modes',
+            ),
+          ),
+          UserFormField(
+              keyName: "lastname",
+              displayName: "Last Name",
+              userType: LoginUserType.name,
+              icon: Icon(
+                Icons.abc,
+                color: Color.fromARGB(0, 255, 255, 255),
+              )),
           UserFormField(
             keyName: "phone",
             displayName: "Phone Number",
