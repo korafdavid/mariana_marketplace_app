@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mariana_marketplace/login_screen.dart';
+import 'package:mariana_marketplace/car_screen.dart';
+import 'package:mariana_marketplace/classifieds_screen.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key, required this.title}) : super(key: key);
@@ -87,25 +89,34 @@ class _LandingScreenState extends State<LandingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        image: const DecorationImage(
-                            image: NetworkImage(
-                                "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef"),
-                            fit: BoxFit.cover),
-                      ),
-                      child: Card(
-                        color: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        shadowColor: Colors.grey,
-                        child: Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: Text(
-                            'Cars $_counter',
-                            style: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CarScreen()),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          // color: Colors.black,
+                          borderRadius: BorderRadius.circular(15),
+                          image: const DecorationImage(
+                              image: NetworkImage(
+                                  "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef"),
+                              fit: BoxFit.cover),
+                        ),
+                        child: Card(
+                          color: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          // shadowColor: Colors.grey,
+                          child: Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: Text(
+                              'Cars $_counter',
+                              style: const TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       ),
@@ -119,25 +130,33 @@ class _LandingScreenState extends State<LandingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        image: const DecorationImage(
-                            image: NetworkImage(
-                                "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef"),
-                            fit: BoxFit.cover),
-                      ),
-                      child: Card(
-                        color: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        shadowColor: Colors.grey,
-                        child: Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: Text(
-                            'Classified $_counter',
-                            style: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ClassifiedScreen()),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          image: const DecorationImage(
+                              image: NetworkImage(
+                                  "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef"),
+                              fit: BoxFit.cover),
+                        ),
+                        child: Card(
+                          color: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          // shadowColor: null,
+                          child: Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: Text(
+                              'Classified $_counter',
+                              style: const TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       ),
