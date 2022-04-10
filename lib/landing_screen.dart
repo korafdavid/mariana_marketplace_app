@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mariana_marketplace/login_screen.dart';
+<<<<<<< HEAD
 import 'package:mariana_marketplace/car_screen.dart';
 import 'package:mariana_marketplace/classifieds_screen.dart';
+=======
+import 'package:mariana_marketplace/login_screen.dart';
+>>>>>>> main
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key, required this.title}) : super(key: key);
@@ -35,7 +39,7 @@ class _LandingScreenState extends State<LandingScreen> {
       ),
       body: Container(
         padding: const EdgeInsets.only(top: 5, left: 5, right: 5),
-        color: Colors.grey,
+        color: Color.fromARGB(255, 255, 255, 255),
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:mariana_marketplace/login_screen.dart';
 
 class CarScreen extends StatefulWidget {
@@ -374,3 +375,5 @@ class _CarScreenState extends State<CarScreen> {
   // }
 
 }
+=======
+>>>>>>> main
