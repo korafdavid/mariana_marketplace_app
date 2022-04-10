@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mariana_marketplace/login_screen.dart';
-<<<<<<< HEAD
 import 'package:mariana_marketplace/car_screen.dart';
 import 'package:mariana_marketplace/classifieds_screen.dart';
-=======
-import 'package:mariana_marketplace/login_screen.dart';
->>>>>>> main
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key, required this.title}) : super(key: key);
@@ -138,7 +134,8 @@ class _LandingScreenState extends State<LandingScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ClassifiedScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => ClassifiedScreen()),
                         );
                       },
                       child: Container(
