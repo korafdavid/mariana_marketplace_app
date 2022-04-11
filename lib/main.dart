@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.green,
       ),
-      home: const LandingScreen(title: 'Ryans Marketplace'),
+      home: const LandingScreen(title: 'Mariana Marketplace'),
     );
   }
 }
