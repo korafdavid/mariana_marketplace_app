@@ -21,6 +21,7 @@
 #.vscode/
 
 # Flutter/Dart/Pub related
+test_screen.dart
 secrets.dart
 **/doc/api/
 **/ios/Flutter/.last_build_id

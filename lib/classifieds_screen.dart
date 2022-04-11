@@ -1,6 +1,12 @@
+import 'dart:io';
+
+import 'package:appwrite/models.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+
+import 'package:mariana_marketplace/secrets.dart';
 import 'package:mariana_marketplace/login_screen.dart';
+import 'package:appwrite/appwrite.dart';
 
 class ClassifiedScreen extends StatefulWidget {
   // const CarScreen(Key? key) : super(key: key);
@@ -28,11 +34,32 @@ class _ClassifiedScreenState extends State<ClassifiedScreen> {
     });
   }
 
+  Future<List<Document>> getClassifiedsList() async {
+    // Init SDK
+    Client client = Client();
+    Database database = Database(client);
+
+    client
+            .setEndpoint(appwriteEndpoint) // Your API Endpoint
+            .setProject(appwriteProjectID) // Your project ID
+        ;
+    Future<DocumentList> result = database.listDocuments(
+      collectionId: classifiedsCollectionId,
+    );
+
+    DocumentList finishedResult = await result;
+    debugPrint(finishedResult.toString());
+
+    debugPrint(finishedResult.documents[0].data["name"].toString());
+
+    return finishedResult.documents;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Classified Screen'),
+        title: const Text('Test Screen'),
         // actions: [
         //   IconButton(
         //     icon: const Icon(Icons.list),
@@ -41,133 +68,45 @@ class _ClassifiedScreenState extends State<ClassifiedScreen> {
         //   ),
         // ],
       ),
-      body: Container(
-        padding: const EdgeInsets.only(top: 5, left: 5, right: 5),
-        color: Colors.grey,
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                Card(
-                  color: Colors.blueGrey,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.list,
-                    ),
-                    onPressed: _resetCounter,
-                    color: Colors.black,
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Card(
-                    color: Colors.blueGrey,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.add_circle_outline,
-                      ),
-                      onPressed: _resetCounter,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    color: Colors.blueGrey,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.account_circle_sharp,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()),
-                        );
-                      },
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: _buildSuggestions(),
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.stretch,
-              //   children: [
-              //     Expanded(
-              //       child: GestureDetector(
-              //         onTap: () {
-              //           // Navigator.push(context, route)
-              //         },
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             borderRadius: BorderRadius.circular(15),
-              //             image: const DecorationImage(
-              //                 image: NetworkImage(
-              //                     "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef"),
-              //                 fit: BoxFit.cover),
-              //           ),
-              //           child: Card(
-              //             color: Colors.transparent,
-              //             shape: RoundedRectangleBorder(
-              //                 borderRadius: BorderRadius.circular(15)),
-              //             shadowColor: Colors.grey,
-              //             child: Align(
-              //               alignment: FractionalOffset.bottomCenter,
-              //               child: Text(
-              //                 'Cars $_counter',
-              //                 style: const TextStyle(
-              //                     fontSize: 30, fontWeight: FontWeight.bold),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-            ),
-          ],
-        ),
-      ),
+      body: Container(child: cardBuilder()),
     );
   }
 
-  Widget _buildSuggestions() {
-    return ListView.builder(
-      // padding: const EdgeInsets.all(10),
-      itemCount: 20, //I think I need this
-      itemBuilder: (context, i) {
-        // if (i.isOdd) {
-        //   return const Divider();
-        // }
-
-        // final index = i ~/ 2;
-        final index = i;
-        if (index >= _suggestions.length) {
-          _suggestions.addAll([
-            'one',
-            'two',
-            'three',
-            'four',
-            'five',
-            '6',
-            '7',
-            '8',
-            '9',
-            '10'
-          ]);
+  Widget cardBuilder() {
+    getClassifiedsList();
+    return FutureBuilder(
+      future: getClassifiedsList(),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (!snapshot.hasData) {
+          if (!Platform.isIOS) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return const Center(child: CupertinoActivityIndicator());
+          }
+        } else {
+          return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, i) {
+                return classifiedCard(
+                    snapshot.data[i].data["name"].toString(),
+                    snapshot.data[i].data["name"].toString(),
+                    snapshot.data[i].data["price"].toString(),
+                    snapshot.data[i].data["description"].toString());
+              });
         }
-        return _buildRow(_suggestions[index]);
       },
     );
   }
 
-  Widget _buildRow(String pair) {
-    final alreadySaved = _saved.contains(pair);
+  Widget classifiedCard(
+    String saved,
+    String Title,
+    String Price,
+    String Description,
+  ) {
+    final alreadySaved = _saved.contains(saved);
     return Container(
       // color: Colors.black,
       padding: const EdgeInsets.fromLTRB(10, 7, 10, 8),
@@ -195,14 +134,14 @@ class _ClassifiedScreenState extends State<ClassifiedScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Charlie',
-                    style: TextStyle(
+                    Title,
+                    style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text('\$8.99'),
-                  Text('I\'m cute'),
+                  Text(Price),
+                  Text(Description),
                 ],
               ),
             ),
@@ -210,11 +149,12 @@ class _ClassifiedScreenState extends State<ClassifiedScreen> {
               icon: Icon(alreadySaved ? Icons.favorite : Icons.favorite_border),
               color: alreadySaved ? Colors.red : Colors.grey,
               onPressed: () {
+                getClassifiedsList();
                 setState(() {
                   if (alreadySaved) {
-                    _saved.remove(pair);
+                    _saved.remove(saved);
                   } else {
-                    _saved.add(pair);
+                    _saved.add(saved);
                   }
                 });
               },

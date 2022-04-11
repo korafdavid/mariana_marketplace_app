@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mariana_marketplace/test_screen.dart';
 import 'package:mariana_marketplace/login_screen.dart';
 import 'package:mariana_marketplace/car_screen.dart';
 import 'package:mariana_marketplace/classifieds_screen.dart';
@@ -47,7 +48,12 @@ class _LandingScreenState extends State<LandingScreen> {
                     icon: const Icon(
                       Icons.list,
                     ),
-                    onPressed: _resetCounter,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TestScreen()),
+                      );
+                    },
                     color: Colors.black,
                   ),
                 ),
