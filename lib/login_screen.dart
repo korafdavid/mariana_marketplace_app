@@ -67,7 +67,7 @@ class LoginScreen extends StatelessWidget {
       return null;
     } catch (e) {
       final String errorString =
-          "Did not complete user signup fully, erorr: " + e.toString();
+          "Did not complete user signup fully, error: " + e.toString();
       debugPrint(errorString);
       return "Could not complete user signup";
     }

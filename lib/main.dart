@@ -3,8 +3,9 @@ import 'package:appwrite/appwrite.dart';
 import 'secrets.dart';
 import 'login_screen.dart';
 import 'landing_screen.dart';
+import 'package:mariana_marketplace/api_calls.dart';
 
-Client appwriteClient = Client();
+//Client appwriteClient = Client();
 
 void main() {
   runApp(const MyApp());
