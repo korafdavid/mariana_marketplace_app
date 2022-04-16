@@ -15,6 +15,7 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen> {
   int _counter = 0;
+  final data = Data(text: 'watch', counter: 1, dateTime: '11111');
 
   void _incrementCounter() {
     setState(() {
@@ -51,7 +52,9 @@ class _LandingScreenState extends State<LandingScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => TestScreen()),
+                        MaterialPageRoute(builder: (context) => TestScreen(
+                          data: data,
+                        )),
                       );
                     },
                     color: Colors.black,
@@ -175,11 +178,24 @@ class _LandingScreenState extends State<LandingScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: (){
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(builder: (context) => TestScreen()),
+            
+      //     );
+      //   },
+      //   tooltip: 'Go to test Screen',
+      //   child: const Icon(Icons.add),
+      // ),
     );
   }
+}
+
+class Data {
+  String text;
+  int counter;
+  String dateTime;
+  Data({required this.text, required this.counter, required this.dateTime});
 }

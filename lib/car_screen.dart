@@ -59,7 +59,7 @@ class _CarScreenState extends State<CarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Test Screen'),
+        title: const Text('Car Screen'),
         // actions: [
         //   IconButton(
         //     icon: const Icon(Icons.list),

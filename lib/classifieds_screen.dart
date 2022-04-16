@@ -59,7 +59,7 @@ class _ClassifiedScreenState extends State<ClassifiedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Test Screen'),
+        title: const Text('Classifieds Screen'),
         // actions: [
         //   IconButton(
         //     icon: const Icon(Icons.list),
