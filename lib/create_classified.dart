@@ -14,7 +14,11 @@ class CreateClassifiedScreen extends StatefulWidget {
 }
 
 class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
+  //Form Vars
   final _formKey = GlobalKey<FormState>();
+  String title = "Stuff";
+  String price = "123";
+  String description = "";
   String categorySelectedValue = "Announcements";
   List<String> categorySelectionList = [
     'Announcements',
@@ -57,13 +61,13 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
     'Used - Poor',
     'Used - Damaged'
   ];
+
+  //Image Picker Vars
   final ImagePicker _picker = ImagePicker();
   List<XFile>? _imageFileList = [];
 
   void selectImages() async {
     List<XFile>? selectedImages = await _picker.pickMultiImage();
-
-    debugPrint('Got here');
 
     if (selectedImages!.isNotEmpty) {
       _imageFileList!.addAll(selectedImages);
@@ -95,6 +99,12 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
                       }
                       return null;
                     },
+                    onSaved: (value) {
+                      setState(() {
+                        debugPrint("Setting title = " + value!);
+                        title = value;
+                      });
+                    },
                   ),
                   TextFormField(
                     // The validator receives the text that the user has entered.
@@ -108,6 +118,11 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
                         return 'Please enter some text';
                       }
                       return null;
+                    },
+                    onSaved: (value) {
+                      setState(() {
+                        price = value!;
+                      });
                     },
                   ),
                   DropdownButtonFormField<String>(
@@ -176,6 +191,21 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
                       );
                     }).toList(),
                   ),
+                  TextFormField(
+                    // The validator receives the text that the user has entered.
+                    decoration: const InputDecoration(labelText: "Description"),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      setState(() {
+                        description = value!;
+                      });
+                    },
+                  ),
                 ],
               ),
             ),
@@ -203,7 +233,15 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
 
-                  uploadImages(_imageFileList!);
+                  _formKey.currentState?.save();
+
+                  createClassified(
+                      title,
+                      price,
+                      description,
+                      conditionSelectedValue,
+                      categorySelectedValue,
+                      _imageFileList!);
 
                   // More at https://docs.flutter.dev/cookbook/forms/validation
                   ScaffoldMessenger.of(context).showSnackBar(

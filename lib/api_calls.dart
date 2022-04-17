@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 Client client = Client();
 Account account = Account(client);
 Storage storage = Storage(client);
+Database database = Database(client);
 
 Future<bool> getLoggedIn() async {
   client
@@ -54,28 +55,117 @@ void deleteAllAccountSessions() {
   });
 }
 
+Future<File> uploadSingleImage(XFile image) async {
+  Future<File> result = storage.createFile(
+    bucketId: classifiedsImagesBucketID,
+    fileId: 'unique()',
+    file: InputFile(
+        path: image.path,
+        filename: 'classified_image_' + image.name.toString()),
+  );
+  return result;
+}
+
 Future<List<File>> uploadImages(List<XFile> imageFiles) async {
   List<File> returnFileList = [];
+  List<String> returnFileStringList = [];
 
   client
           .setEndpoint(appwriteEndpoint) // Your API Endpoint
           .setProject(appwriteProjectID) // Your project ID
       ;
 
-  imageFiles.forEach((element) async {
-    try {
-      File result = await storage.createFile(
-        bucketId: classifiedsImagesBucketID,
-        fileId: 'unique()',
-        file: InputFile(
-            path: element.path,
-            filename: 'classified_image_' + element.name.toString()),
-      );
-      returnFileList.add(result);
-    } catch (e) {
-      debugPrint("Error uploading image " + e.toString());
-    }
+  await Future.wait(imageFiles.map((item) async {
+    File finalItem = await uploadSingleImage(item);
+    returnFileList.add(finalItem);
+  }).toList());
+
+  returnFileList.forEach((element) {
+    returnFileStringList.add(element.name);
   });
 
+  //Old way below, completes empty due to it returning before futures complete:
+  //imageFiles.forEach((element) async {
+  //  try {
+  //    File result = await storage.createFile(
+  //      bucketId: classifiedsImagesBucketID,
+  //      fileId: 'unique()',
+  //      file: InputFile(
+  //          path: element.path,
+  //          filename: 'classified_image_' + element.name.toString()),
+  //    );
+  //    returnFileList.add(result);
+  //  } catch (e) {
+  //    debugPrint("Error uploading image " + e.toString());
+  //  }
+  //});
+
+  print("Returning file list: " + returnFileList.toString());
+
   return returnFileList;
+}
+
+Future<Document> createClassified(String name, String price, String description,
+    String condition, String category, List<XFile> imageFiles) async {
+  List<File> uploadedImages = await uploadImages(imageFiles);
+  List<String> classifiedImagesList = [];
+
+  //Upload image files first to get a list files uploaded for classified entry
+
+  //uploadedImages = await uploadImages(imageFiles);
+  uploadedImages.forEach(((element) {
+    classifiedImagesList.add(element.$id);
+  }));
+
+  debugPrint(
+      "Full classifiedImagesList String: " + classifiedImagesList.toString());
+
+  Client client = Client();
+
+  client
+          .setEndpoint(appwriteEndpoint) // Your API Endpoint
+          .setProject(appwriteProjectID) // Your project ID
+      ;
+
+  User? currentUser = await getLoggedInUser();
+
+  debugPrint("account_id: " +
+      currentUser!.$id +
+      "\n" +
+      "name: " +
+      name +
+      "\n"
+          "price: " +
+      price +
+      "\n" +
+      "date_posted: " +
+      DateTime.now().toUtc().toString() +
+      "\n"
+          "description: " +
+      description +
+      "\n"
+          "condition: " +
+      condition +
+      "\n"
+          "category: " +
+      category +
+      "\n"
+          "images: " +
+      classifiedImagesList.toString());
+
+  Future<Document> result = database.createDocument(
+    collectionId: classifiedsCollectionId,
+    documentId: 'unique()',
+    data: {
+      "account_id": currentUser.$id,
+      "name": name,
+      "price": price,
+      "date_posted": DateTime.now().toUtc().toString(),
+      "description": description,
+      "category": category,
+      "images": classifiedImagesList
+    },
+  );
+
+  return result;
 }

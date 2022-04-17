@@ -113,7 +113,6 @@ class _LandingScreenState extends State<LandingScreen> {
                             } else {
                               return loginIconButton(Icons.login);
                             }
-                            return Text(snapshot.data.toString());
                           } else {
                             return const Text('Empty data');
                           }
@@ -149,37 +148,34 @@ class _LandingScreenState extends State<LandingScreen> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)),
                           // shadowColor: Colors.grey,
-                          child: Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const Spacer(),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Icon(
-                                        Icons.shopping_bag_outlined,
-                                        size: 120,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Spacer(),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.shopping_bag_outlined,
+                                      size: 120,
+                                    ),
+                                  ]),
+                              const Spacer(),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Align(
+                                      alignment: FractionalOffset.bottomCenter,
+                                      child: Text(
+                                        'Classifieds',
+                                        style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                    ]),
-                                const Spacer(),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Align(
-                                        alignment:
-                                            FractionalOffset.bottomCenter,
-                                        child: Text(
-                                          'Classifieds',
-                                          style: TextStyle(
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ]),
-                              ],
-                            ),
+                                    ),
+                                  ]),
+                            ],
                           ),
                         ),
                       ),
@@ -210,37 +206,34 @@ class _LandingScreenState extends State<LandingScreen> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)),
                           // shadowColor: Colors.grey,
-                          child: Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const Spacer(),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Icon(
-                                        Icons.car_rental,
-                                        size: 120,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Spacer(),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.car_rental,
+                                      size: 120,
+                                    ),
+                                  ]),
+                              const Spacer(),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Align(
+                                      alignment: FractionalOffset.bottomCenter,
+                                      child: Text(
+                                        'Cars',
+                                        style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                    ]),
-                                const Spacer(),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Align(
-                                        alignment:
-                                            FractionalOffset.bottomCenter,
-                                        child: Text(
-                                          'Cars',
-                                          style: TextStyle(
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ]),
-                              ],
-                            ),
+                                    ),
+                                  ]),
+                            ],
                           ),
                         ),
                       ),
