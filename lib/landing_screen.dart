@@ -8,9 +8,7 @@ import 'package:mariana_marketplace/car_screen.dart';
 import 'package:mariana_marketplace/api_calls.dart';
 
 class LandingScreen extends StatefulWidget {
-  const LandingScreen({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const LandingScreen({Key? key}) : super(key: key);
 
   @override
   State<LandingScreen> createState() => _LandingScreenState();
@@ -73,7 +71,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text("Mariana Marketplace"),
       ),
       body: Container(
         padding: const EdgeInsets.only(top: 5, left: 5, right: 5),

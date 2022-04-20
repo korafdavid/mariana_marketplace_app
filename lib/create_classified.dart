@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:mariana_marketplace/api_calls.dart';
+import 'package:mariana_marketplace/landing_screen.dart';
 
 class CreateClassifiedScreen extends StatefulWidget {
   CreateClassifiedScreen({Key? key}) : super(key: key);
@@ -61,11 +62,13 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
     'Used - Poor',
     'Used - Damaged'
   ];
+  Future? uploadingClassified;
 
   //Image Picker Vars
   final ImagePicker _picker = ImagePicker();
   List<XFile>? _imageFileList = [];
 
+  //Method for selecting images
   void selectImages() async {
     List<XFile>? selectedImages = await _picker.pickMultiImage();
 
@@ -74,6 +77,36 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
     }
     debugPrint("Image list length: " + _imageFileList!.length.toString());
     setState(() {});
+  }
+
+  //Widget for submit button + loading indicator
+  Widget? submitButton(Future? uploadingClassified) {
+    if (uploadingClassified != null) {
+      return FutureBuilder(
+        future: uploadingClassified,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            int seconds = 2;
+            Future.delayed(
+              Duration(seconds: seconds),
+              (() async {
+                debugPrint(
+                    "Finished uploading classified, moving to landing after $seconds.");
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const LandingScreen(),
+                  ),
+                );
+              }),
+            );
+            return Text("Finished");
+          } else {
+            return Text("Uploading Classified, Please Wait.");
+          }
+        },
+      );
+    }
+    return Text("Submit");
   }
 
   @override
@@ -229,24 +262,28 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
               onPressed: () {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate() &&
-                    _imageFileList!.length > 1) {
+                    _imageFileList!.isNotEmpty) {
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
 
                   _formKey.currentState?.save();
 
-                  createClassified(
-                      title,
-                      price,
-                      description,
-                      conditionSelectedValue,
-                      categorySelectedValue,
-                      _imageFileList!);
+                  setState(() {
+                    uploadingClassified = createClassified(
+                        title,
+                        price,
+                        description,
+                        conditionSelectedValue,
+                        categorySelectedValue,
+                        _imageFileList!);
+                  });
+
+                  //If you want immidiate screen switch after clicking submit:
+                  //Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  //  builder: (context) => const LandingScreen(),
+                  //));
 
                   // More at https://docs.flutter.dev/cookbook/forms/validation
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -254,7 +291,7 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
                   );
                 }
               },
-              child: const Text('Submit'),
+              child: submitButton(uploadingClassified),
             )
           ],
         ),
