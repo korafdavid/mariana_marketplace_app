@@ -9,6 +9,7 @@ Account account = Account(client);
 Storage storage = Storage(client);
 Database database = Database(client);
 
+// Get future bool with login status
 Future<bool> getLoggedIn() async {
   client
           .setEndpoint(appwriteEndpoint) // Your API Endpoint
@@ -25,6 +26,7 @@ Future<bool> getLoggedIn() async {
   }
 }
 
+// Get currently logged in user
 Future<User?> getLoggedInUser() async {
   client
           .setEndpoint(appwriteEndpoint) // Your API Endpoint
@@ -40,6 +42,7 @@ Future<User?> getLoggedInUser() async {
   }
 }
 
+// delete all account sessions
 void deleteAllAccountSessions() {
   // Init SDK
   client
@@ -55,6 +58,7 @@ void deleteAllAccountSessions() {
   });
 }
 
+// upload a single image
 Future<File> uploadSingleImage(XFile image) async {
   Future<File> result = storage.createFile(
     bucketId: classifiedsImagesBucketID,
@@ -66,6 +70,7 @@ Future<File> uploadSingleImage(XFile image) async {
   return result;
 }
 
+// upload a list of Images getting a Future List of File objects back
 Future<List<File>> uploadImages(List<XFile> imageFiles) async {
   List<File> returnFileList = [];
   List<String> returnFileStringList = [];
@@ -168,4 +173,59 @@ Future<Document> createClassified(String name, String price, String description,
   );
 
   return result;
+}
+
+//Get alll the documents as Documentlist in a collection
+Future<DocumentList> getAllCollectionDocuments(String collectionID) async {
+  debugPrint("Got here getAllCollectionDocuments trying collection id: " +
+      collectionID);
+  Future<DocumentList> result = database.listDocuments(
+    collectionId: collectionID,
+  );
+
+  return result;
+}
+
+//Delete all the documents in a collection
+void deleteAllDocumentsInCollection(String CollectionID) async {
+  DocumentList allCollectionDocList =
+      await getAllCollectionDocuments(CollectionID);
+
+  allCollectionDocList.documents.forEach(
+    (element) {
+      debugPrint("Deleting element: " +
+          element.$id +
+          " from collection: " +
+          CollectionID);
+      Future result = database.deleteDocument(
+        collectionId: CollectionID,
+        documentId: element.$id,
+      );
+    },
+  );
+}
+
+//Get FileList of all files in a bucket
+Future<FileList> getBucketFileList(String bucketID) {
+  Future<FileList> result = storage.listFiles(
+    bucketId: bucketID,
+  );
+
+  return result;
+}
+
+//Delete all files in a bucket
+void deleteAllFilesInBucket(String bucketID) async {
+  FileList allFilesInBucketList = await getBucketFileList(bucketID);
+
+  allFilesInBucketList.files.forEach(
+    (element) {
+      debugPrint(
+          "Deleting element: " + element.$id + " from bucket: " + bucketID);
+      Future result = storage.deleteFile(
+        bucketId: bucketID,
+        fileId: element.$id,
+      );
+    },
+  );
 }

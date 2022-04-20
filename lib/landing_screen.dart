@@ -32,6 +32,28 @@ class _LandingScreenState extends State<LandingScreen> {
     });
   }
 
+  Widget checkLoginIconButtonStatus(AsyncSnapshot snapshot) {
+    print(snapshot.connectionState);
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return loginIconButton(Icons.key);
+    } else if (snapshot.connectionState == ConnectionState.done) {
+      if (snapshot.hasError) {
+        return loginIconButton(Icons.error);
+      } else if (snapshot.hasData) {
+        if (snapshot.data == true) {
+          return loginIconButton(Icons.person);
+        } else {
+          return loginIconButton(Icons.login);
+        }
+      } else {
+        return const Text('Empty data');
+      }
+    } else {
+      debugPrint("Issue with login Icon");
+      return loginIconButton(Icons.error);
+    }
+  }
+
   IconButton loginIconButton(IconData iconData) {
     return IconButton(
       icon: Icon(
@@ -98,28 +120,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       future: loggedIn,
                       initialData: false,
                       builder: (context, AsyncSnapshot<bool> snapshot) {
-                        print(snapshot.connectionState);
-
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return loginIconButton(Icons.key);
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          if (snapshot.hasError) {
-                            return loginIconButton(Icons.error);
-                          } else if (snapshot.hasData) {
-                            if (snapshot.data == true) {
-                              return loginIconButton(Icons.person);
-                            } else {
-                              return loginIconButton(Icons.login);
-                            }
-                          } else {
-                            return const Text('Empty data');
-                          }
-                        } else {
-                          debugPrint("Issue with login Icon");
-                          return loginIconButton(Icons.error);
-                        }
+                        return checkLoginIconButtonStatus(snapshot);
                       },
                     ),
                   ),
