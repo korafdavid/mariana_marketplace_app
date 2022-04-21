@@ -40,35 +40,35 @@ class _FilterScreenState extends State<FilterScreen> {
     });
   }
 
-  Future<List<Document>> getClassifiedsList() async {
-    // Init SDK
-    Client client = Client();
-    Database database = Database(client);
-    String _name = '11111';
-    var query = [Query.equal('name', 'watch')];
-    // var query = [Query.equal('name', widget.data.text)];
+  // Future<List<Document>> getClassifiedsList() async {
+  //   // Init SDK
+  //   Client client = Client();
+  //   Database database = Database(client);
+  //   String _name = '11111';
+  //   // var query = [Query.equal('name', 'watch')];
+  //   // var query = [Query.equal('name', widget.data.text)];
 
     
 
-    client
-            .setEndpoint(appwriteEndpoint) // Your API Endpoint
-            .setProject(appwriteProjectID) // Your project ID
-        ;
-    Future<DocumentList> result = database.listDocuments(
-      collectionId: classifiedsCollectionId,
-      orderAttributes: ["name"],
-      orderTypes: ['ASC'],
-      queries: query,
-      // [Query.equal('name', ['11111', 'watch'])],
-    );
+  //   client
+  //           .setEndpoint(appwriteEndpoint) // Your API Endpoint
+  //           .setProject(appwriteProjectID) // Your project ID
+  //       ;
+  //   Future<DocumentList> result = database.listDocuments(
+  //     collectionId: classifiedsCollectionId,
+  //     orderAttributes: ["name"],
+  //     orderTypes: ['ASC'],
+  //     queries: query,
+  //     // [Query.equal('name', ['11111', 'watch'])],
+  //   );
 
-    DocumentList finishedResult = await result;
-    debugPrint(finishedResult.toString());
+  //   DocumentList finishedResult = await result;
+  //   debugPrint(finishedResult.toString());
 
-    debugPrint(finishedResult.documents[0].data["name"].toString());
+  //   debugPrint(finishedResult.documents[0].data["name"].toString());
 
-    return finishedResult.documents;
-  }
+  //   return finishedResult.documents;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -169,134 +169,10 @@ class _FilterScreenState extends State<FilterScreen> {
           ),
         ],
       ),
-      // body: Column(
-      //   // height: 200,
-      //   // color: Colors.blue,
-      //   children: [
-      //     Expanded(
-      //       flex: 2,
-      //       child: Row(
-      //         // color: Colors.blueGrey[600],
-      //         children: const [
-      //           Expanded(
-      //             flex: 1,
-      //             child: Card(
-      //               color: Colors.blueGrey,
-      //               child: Text("something biggersad"),
-      //             ),
-      //           ),
-      //           Text("data"),
-      //         ],
-      //       ),
-      //     ),
-      //     // Row(
-      //     //   children: const [
-      //     //     TextField(
-      //     //       decoration: InputDecoration(
-      //     //         border: OutlineInputBorder(),
-      //     //         hintText: 'Enter a search term',
-      //     //       ),
-      //     //     ),
-      //     //   ],
-      //     // )
-      //   ],
-      // ),
+      
     );
   }
   void submit(){
     Navigator.of(context).pop(searchTextBoxController.text);
   }
-
-  // Widget cardBuilder() {
-  //   getClassifiedsList();
-  //   return FutureBuilder(
-  //     future: getClassifiedsList(),
-  //     builder: (context, AsyncSnapshot snapshot) {
-  //       if (!snapshot.hasData) {
-  //         if (!Platform.isIOS) {
-  //           return const Center(
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         } else {
-  //           return const Center(child: CupertinoActivityIndicator());
-  //         }
-  //       } else {
-  //         return ListView.builder(
-  //             itemCount: snapshot.data.length,
-  //             itemBuilder: (context, i) {
-  //               return classifiedCard(
-  //                   snapshot.data[i].data["name"].toString(),
-  //                   snapshot.data[i].data["name"].toString(),
-  //                   snapshot.data[i].data["price"].toString(),
-  //                   snapshot.data[i].data["description"].toString());
-  //             });
-  //       }
-  //     },
-  //   );
-  // }
-
-  // Widget classifiedCard(
-  //   String saved,
-  //   String Title,
-  //   String Price,
-  //   String Description,
-  // ) {
-  //   final alreadySaved = _saved.contains(saved);
-  //   return Container(
-  //     // color: Colors.black,
-  //     padding: const EdgeInsets.fromLTRB(10, 7, 10, 8),
-  //     height: 200,
-  //     width: double.maxFinite,
-  //     child: Card(
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-  //       elevation: 10,
-  //       child: Row(
-  //         children: [
-  //           Expanded(
-  //             flex: 2,
-  //             child: Container(
-  //               decoration: BoxDecoration(
-  //                 borderRadius: BorderRadius.circular(15),
-  //                 image: const DecorationImage(
-  //                     image: NetworkImage(
-  //                         "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef"),
-  //                     fit: BoxFit.cover),
-  //               ),
-  //             ),
-  //           ),
-  //           Expanded(
-  //             flex: 2,
-  //             child: Column(
-  //               children: [
-  //                 Text(
-  //                   Title,
-  //                   style: const TextStyle(
-  //                     fontSize: 30,
-  //                     fontWeight: FontWeight.bold,
-  //                   ),
-  //                 ),
-  //                 Text(Price),
-  //                 Text(Description),
-  //               ],
-  //             ),
-  //           ),
-  //           IconButton(
-  //             icon: Icon(alreadySaved ? Icons.favorite : Icons.favorite_border),
-  //             color: alreadySaved ? Colors.red : Colors.grey,
-  //             onPressed: () {
-  //               getClassifiedsList();
-  //               setState(() {
-  //                 if (alreadySaved) {
-  //                   _saved.remove(saved);
-  //                 } else {
-  //                   _saved.add(saved);
-  //                 }
-  //               });
-  //             },
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }

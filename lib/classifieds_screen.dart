@@ -48,7 +48,7 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Test Screen'),
+          title: const Text('Classified Screen'),
           // actions: [
           //   IconButton(
           //     icon: const Icon(Icons.list),
