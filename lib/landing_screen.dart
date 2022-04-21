@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:mariana_marketplace/classifieds_screen.dart';
 import 'package:mariana_marketplace/create_classified.dart';
 import 'package:mariana_marketplace/test_screen.dart';
 import 'package:mariana_marketplace/login_screen.dart';
@@ -134,7 +135,8 @@ class _LandingScreenState extends State<LandingScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => CarScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => ClassifiedsScreen()),
                         );
                       },
                       child: Container(

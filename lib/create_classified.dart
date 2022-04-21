@@ -91,7 +91,7 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
               Duration(seconds: seconds),
               (() async {
                 debugPrint(
-                    "Finished uploading classified, moving to landing after $seconds.");
+                    "Finished uploading classified, moving to landing after $seconds seconds.");
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => const LandingScreen(),

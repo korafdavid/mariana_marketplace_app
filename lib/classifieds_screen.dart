@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:appwrite/models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mariana_marketplace/api_calls.dart';
 
 import 'package:mariana_marketplace/secrets.dart';
 import 'package:appwrite/appwrite.dart';
@@ -48,7 +50,7 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Test Screen'),
+          title: const Text('Classifieds'),
           // actions: [
           //   IconButton(
           //     icon: const Icon(Icons.list),
@@ -63,9 +65,11 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
             builderDelegate: PagedChildBuilderDelegate<Document>(
               itemBuilder: (context, item, index) {
                 return classifiedCard(
-                    item.data["name"].toString(),
-                    item.data["price"].toString(),
-                    item.data["description"].toString());
+                  item.data["name"],
+                  item.data["price"].toString(),
+                  item.data["description"].toString(),
+                  item.data["images"][0].toString(),
+                );
               },
             ),
           ),
@@ -75,11 +79,28 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
   // package takes care of that. If you want to customize them, use the
   // [PagedChildBuilderDelegate] properties.
 
+  Widget classifiedThumbnail(
+      String bucketID, String fileID, int width, int height) {
+    return FutureBuilder(
+      future: getFilePreview(bucketID, fileID, width,
+          height), //works for both public file and private file, for private files you need to be logged in
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return Image.memory(
+            snapshot.data as Uint8List,
+          );
+        } else {
+          return Center(
+            child: Container(
+                width: 16, height: 16, child: CircularProgressIndicator()),
+          );
+        }
+      },
+    );
+  }
+
   Widget classifiedCard(
-    String Title,
-    String Price,
-    String Description,
-  ) {
+      String Title, String Price, String Description, String ThumbnailID) {
     return Container(
       // color: Colors.black,
       padding: const EdgeInsets.fromLTRB(10, 7, 10, 8),
@@ -88,37 +109,55 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 10,
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  image: const DecorationImage(
-                      image: NetworkImage(
-                          "https://images.unsplash.com/photo-1579202673506-ca3ce28943ef"),
-                      fit: BoxFit.cover),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: classifiedThumbnail(
+                        "6259fa52f2266bd32b41",
+                        ThumbnailID,
+                        150,
+                        150,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                children: [
-                  Text(
-                    Title,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Spacer(),
+                    Text(
+                      Title,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  Text(Price),
-                  Text(Description),
-                ],
+                    Spacer(),
+                    Text("\$$Price"),
+                    Spacer(),
+                    Spacer(),
+                    Text(
+                        ("Brief: BLEBIBJEIJARIERJALADKFJASKLDFJASLKDFJASKLDFJASDKLFJASDFKLJASDFKLASJDFKLASJDFA" +
+                                    Description)
+                                .substring(0, 50) +
+                            "..."),
+                    Spacer(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

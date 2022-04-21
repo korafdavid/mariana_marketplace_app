@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:image_picker/image_picker.dart';
@@ -228,4 +230,19 @@ void deleteAllFilesInBucket(String bucketID) async {
       );
     },
   );
+}
+
+Future<Uint8List?> getFilePreview(
+    String bucketID, String fileID, int width, int height) async {
+  Future<Uint8List?> returnValue = storage.getFilePreview(
+    bucketId: "6259fa52f2266bd32b41",
+    fileId: fileID,
+    width: width,
+    height: height,
+  );
+
+  debugPrint("Attempting to get bucket: $bucketID fileID $fileID");
+  debugPrint(returnValue.toString());
+
+  return returnValue;
 }
