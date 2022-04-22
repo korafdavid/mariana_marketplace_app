@@ -136,7 +136,8 @@ class _LandingScreenState extends State<LandingScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ClassifiedsScreen()),
+                              builder: (context) =>
+                                  ClassifiedsScreen(queries: [])),
                         );
                       },
                       child: Container(

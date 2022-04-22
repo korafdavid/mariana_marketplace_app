@@ -5,6 +5,7 @@ import 'package:appwrite/models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mariana_marketplace/api_calls.dart';
+import 'package:mariana_marketplace/classified_filter_screen.dart';
 
 import 'package:mariana_marketplace/secrets.dart';
 import 'package:appwrite/appwrite.dart';
@@ -12,7 +13,8 @@ import 'package:appwrite/appwrite.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ClassifiedsScreen extends StatefulWidget {
-  const ClassifiedsScreen({Key? key}) : super(key: key);
+  ClassifiedsScreen({Key? key, required this.queries}) : super(key: key);
+  final List<String> queries;
 
   @override
   _ClassifiedsScreenState createState() => _ClassifiedsScreenState();
@@ -27,14 +29,14 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
   @override
   void initState() {
     _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
+      _fetchPage(pageKey, widget.queries);
     });
     super.initState();
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(int pageKey, queries) async {
     try {
-      final newItems = await getClassifiedsList(pageKey, _pageSize);
+      final newItems = await getClassifiedsList(pageKey, _pageSize, queries);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
@@ -51,13 +53,20 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: const Text('Classifieds'),
-          // actions: [
-          //   IconButton(
-          //     icon: const Icon(Icons.list),
-          //     onPressed: _pushSaved,
-          //     tooltip: 'Saved Suggestions',
-          //   ),
-          // ],
+          actions: [
+            IconButton(
+              color: Colors.white,
+              icon: const Icon(Icons.filter_alt_sharp),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ClassifiedFilterScreen()),
+                );
+              },
+              tooltip: 'Filter',
+            ),
+          ],
         ),
         body: Container(
           child: PagedListView<int, Document>(
@@ -163,20 +172,24 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
     );
   }
 
-  Future<List<Document>> getClassifiedsList(int aOffset, int aLimit) async {
+  Future<List<Document>> getClassifiedsList(
+      int aOffset, int aLimit, List<String> anQueries) async {
     // Init SDK
     Client client = Client();
     Database database = Database(client);
+
+    debugPrint(
+        "Calling getClassifiedsList with queries" + anQueries.toString());
 
     client
             .setEndpoint(appwriteEndpoint) // Your API Endpoint
             .setProject(appwriteProjectID) // Your project ID
         ;
     Future<DocumentList> result = database.listDocuments(
-      collectionId: classifiedsCollectionId,
-      limit: aLimit,
-      offset: aOffset,
-    );
+        collectionId: classifiedsCollectionId,
+        limit: aLimit,
+        offset: aOffset,
+        queries: anQueries);
 
     DocumentList finishedResult = await result;
     debugPrint(finishedResult.toString());
