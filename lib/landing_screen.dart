@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:mariana_marketplace/classifieds_screen.dart';
 import 'package:mariana_marketplace/create_classified.dart';
 import 'package:mariana_marketplace/test_screen.dart';
 import 'package:mariana_marketplace/login_screen.dart';
@@ -8,9 +9,7 @@ import 'package:mariana_marketplace/car_screen.dart';
 import 'package:mariana_marketplace/api_calls.dart';
 
 class LandingScreen extends StatefulWidget {
-  const LandingScreen({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const LandingScreen({Key? key}) : super(key: key);
 
   @override
   State<LandingScreen> createState() => _LandingScreenState();
@@ -33,6 +32,28 @@ class _LandingScreenState extends State<LandingScreen> {
     });
   }
 
+  Widget checkLoginIconButtonStatus(AsyncSnapshot snapshot) {
+    print(snapshot.connectionState);
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return loginIconButton(Icons.key);
+    } else if (snapshot.connectionState == ConnectionState.done) {
+      if (snapshot.hasError) {
+        return loginIconButton(Icons.error);
+      } else if (snapshot.hasData) {
+        if (snapshot.data == true) {
+          return loginIconButton(Icons.person);
+        } else {
+          return loginIconButton(Icons.login);
+        }
+      } else {
+        return const Text('Empty data');
+      }
+    } else {
+      debugPrint("Issue with login Icon");
+      return loginIconButton(Icons.error);
+    }
+  }
+
   IconButton loginIconButton(IconData iconData) {
     return IconButton(
       icon: Icon(
@@ -52,7 +73,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text("Mariana Marketplace"),
       ),
       body: Container(
         padding: const EdgeInsets.only(top: 5, left: 5, right: 5),
@@ -102,28 +123,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       future: loggedIn,
                       initialData: false,
                       builder: (context, AsyncSnapshot<bool> snapshot) {
-                        print(snapshot.connectionState);
-
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return loginIconButton(Icons.key);
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          if (snapshot.hasError) {
-                            return loginIconButton(Icons.error);
-                          } else if (snapshot.hasData) {
-                            if (snapshot.data == true) {
-                              return loginIconButton(Icons.person);
-                            } else {
-                              return loginIconButton(Icons.login);
-                            }
-                          } else {
-                            return const Text('Empty data');
-                          }
-                        } else {
-                          debugPrint("Issue with login Icon");
-                          return loginIconButton(Icons.error);
-                        }
+                        return checkLoginIconButtonStatus(snapshot);
                       },
                     ),
                   ),
@@ -139,7 +139,9 @@ class _LandingScreenState extends State<LandingScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => CarScreen()),
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ClassifiedsScreen(queries: [])),
                         );
                       },
                       child: Container(
@@ -225,18 +227,18 @@ class _LandingScreenState extends State<LandingScreen> {
                                   ]),
                               const Spacer(),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Align(
-                                    alignment: FractionalOffset.bottomCenter,
-                                    child: Text(
-                                      'Cars',
-                                      style: TextStyle(
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.bold),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Align(
+                                      alignment: FractionalOffset.bottomCenter,
+                                      child: Text(
+                                        'Cars',
+                                        style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                  ),
-                                ]),
+                                  ]),
                             ],
                           ),
                         ),

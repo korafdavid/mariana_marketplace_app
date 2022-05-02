@@ -209,8 +209,7 @@ class LoginScreen extends StatelessWidget {
         onSignup: _signupUser,
         onSubmitAnimationCompleted: () {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) =>
-                const LandingScreen(title: 'Mariana Marketplace'),
+            builder: (context) => const LandingScreen(),
           ));
         },
         onRecoverPassword: _recoverPassword,
