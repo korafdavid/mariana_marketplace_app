@@ -18,11 +18,11 @@ class ClassifiedFilterScreen extends StatefulWidget {
 class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
   //Form Vars
   final _formKey = GlobalKey<FormState>();
-  String titleContainsQuery = '';
-  String priceMinQuery = '';
-  String priceMaxQuery = '';
-  String descriptionContainsQuery = '';
-  String categoryQuery = '';
+  Query? titleContainsQuery;
+  Query? priceMinQuery;
+  Query? priceMaxQuery;
+  Query? descriptionContainsQuery;
+  Query? categoryQuery;
   List<String> categoryQueryList = [
     '',
     'Announcements',
@@ -56,7 +56,7 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
     'Weddings',
     'Uncategorized'
   ];
-  String conditionQuery = '';
+  Query? conditionQuery;
   List<String> conditionQueryList = [
     '',
     'New',
@@ -67,7 +67,7 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
     'Used - Damaged'
   ];
 
-  List<String> queries = [];
+  List queries = [];
 
   @override
   Widget build(BuildContext context) {
@@ -93,11 +93,12 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
                     },
                     onSaved: (value) {
                       setState(() {
-                        debugPrint("Setting title = " + value!);
-                        if (value.isNotEmpty) {
-                          queries.add(Query.search('title', value));
+                        debugPrint("Title value = " + value.toString());
+                        if (value != "") {
+                          debugPrint("Setting title = " + value.toString());
+                          queries.add(Query.search('name', value.toString()));
                         } else {
-                          titleContainsQuery = "";
+                          //titleContainsQuery = "";
                         }
                       });
                     },
@@ -119,13 +120,14 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
                           },
                           onSaved: (value) {
                             setState(() {
-                              priceMinQuery = value!;
-                              if (value.isNotEmpty) {
-                                queries.add(Query.greater('price', value));
+                              //priceMinQuery = value!;
+                              if (value != "") {
+                                queries.add(Query.greaterEqual(
+                                    'price', int.parse(value!)));
                               } else {
-                                priceMinQuery = '';
+                                //priceMinQuery = '';
                               }
-                              debugPrint(priceMinQuery);
+                              debugPrint(priceMinQuery.toString());
                             });
                           },
                         ),
@@ -145,11 +147,12 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
                           },
                           onSaved: (value) {
                             setState(() {
-                              priceMaxQuery = value!;
-                              if (value.isNotEmpty) {
-                                queries.add(Query.lesser('price', value));
+                              //priceMaxQuery = value!;
+                              if (value != "") {
+                                queries.add(Query.lesserEqual(
+                                    'price', int.parse(value!)));
                               } else {
-                                priceMaxQuery = '';
+                                //priceMaxQuery = '';
                               }
                             });
                           },
@@ -158,7 +161,7 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
                     ],
                   ),
                   DropdownButtonFormField<String>(
-                    value: categoryQuery,
+                    //value: categoryQuery,
                     decoration: const InputDecoration(labelText: "Category"),
                     hint: const Text(
                       'choose one',
@@ -166,16 +169,16 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
                     isExpanded: true,
                     onChanged: (value) {
                       setState(() {
-                        categoryQuery = value!;
+                        //categoryQuery = value!;
                       });
                     },
                     onSaved: (value) {
                       setState(() {
-                        categoryQuery = value!;
-                        if (value.isNotEmpty) {
+                        //categoryQuery = value!;
+                        if (value != null) {
                           queries.add(Query.equal('category', value));
                         } else {
-                          categoryQuery = '';
+                          //categoryQuery = '';
                         }
                       });
                     },
@@ -192,7 +195,7 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
                     }).toList(),
                   ),
                   DropdownButtonFormField<String>(
-                    value: conditionQuery,
+                    //value: conditionQuery,
                     decoration: const InputDecoration(labelText: "Condition"),
                     hint: const Text(
                       'choose one',
@@ -200,16 +203,16 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
                     isExpanded: true,
                     onChanged: (value) {
                       setState(() {
-                        conditionQuery = value!;
+                        //conditionQuery = value!;
                       });
                     },
                     onSaved: (value) {
                       setState(() {
-                        conditionQuery = value!;
-                        if (value.isNotEmpty) {
+                        //conditionQuery = value!;
+                        if (value != null) {
                           queries.add(Query.equal('condition', value));
                         } else {
-                          categoryQuery = '';
+                          //categoryQuery = '';
                         }
                       });
                     },
@@ -234,11 +237,12 @@ class _ClassifiedFilterScreenState extends State<ClassifiedFilterScreen> {
                     },
                     onSaved: (value) {
                       setState(() {
-                        descriptionContainsQuery = value!;
-                        if (value.isNotEmpty) {
-                          queries.add(Query.search('description', value));
+                        //descriptionContainsQuery = value!;
+                        if (value != "") {
+                          queries.add(
+                              Query.search('description', value.toString()));
                         } else {
-                          descriptionContainsQuery = '';
+                          //descriptionContainsQuery = '';
                         }
                       });
                     },

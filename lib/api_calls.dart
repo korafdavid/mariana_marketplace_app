@@ -170,7 +170,8 @@ Future<Document> createClassified(String name, String price, String description,
       "date_posted": DateTime.now().toUtc().toString(),
       "description": description,
       "category": category,
-      "images": classifiedImagesList
+      "images": classifiedImagesList,
+      "condition": condition
     },
   );
 

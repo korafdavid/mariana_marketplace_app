@@ -14,7 +14,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ClassifiedsScreen extends StatefulWidget {
   ClassifiedsScreen({Key? key, required this.queries}) : super(key: key);
-  final List<String> queries;
+  final List queries;
 
   @override
   _ClassifiedsScreenState createState() => _ClassifiedsScreenState();
@@ -173,13 +173,12 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
   }
 
   Future<List<Document>> getClassifiedsList(
-      int aOffset, int aLimit, List<String> anQueries) async {
+      int aOffset, int aLimit, List anQueries) async {
     // Init SDK
     Client client = Client();
     Database database = Database(client);
 
-    debugPrint(
-        "Calling getClassifiedsList with queries" + anQueries.toString());
+    debugPrint("Calling getClassifiedsList with queries");
 
     client
             .setEndpoint(appwriteEndpoint) // Your API Endpoint
