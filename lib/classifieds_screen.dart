@@ -34,6 +34,8 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
     super.initState();
   }
 
+  Future<DocumentList?> myFavorites = getAccountFavorites();
+
   Future<void> _fetchPage(int pageKey, queries) async {
     try {
       final newItems = await getClassifiedsList(pageKey, _pageSize, queries);
@@ -78,6 +80,7 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
                   item.data["price"].toString(),
                   item.data["description"].toString(),
                   item.data["images"][0].toString(),
+                  item.data["\$id"].toString(),
                 );
               },
             ),
@@ -108,8 +111,9 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
     );
   }
 
-  Widget classifiedCard(
-      String Title, String Price, String Description, String ThumbnailID) {
+  Widget classifiedCard(String Title, String Price, String Description,
+      String ThumbnailID, String classifiedID) {
+    //debugPrint("Item ID: " + classifiedID);
     return Container(
       // color: Colors.black,
       padding: const EdgeInsets.fromLTRB(10, 7, 10, 8),
@@ -146,22 +150,52 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Spacer(),
-                    Text(
-                      Title,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  Title,
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text("\$$Price"),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              children: [
+                                heartButton(
+                                    myFavorites, classifiedID, "standard")
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Spacer(),
-                    Text("\$$Price"),
-                    Spacer(),
-                    Spacer(),
-                    Text(
-                        ("Brief: BLEBIBJEIJARIERJALADKFJASKLDFJASLKDFJASKLDFJASDKLFJASDFKLJASDFKLASJDFKLASJDFA" +
-                                    Description)
-                                .substring(0, 50) +
-                            "..."),
-                    Spacer(),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              ("Description: BLEBIBJEIJARIERJALADKFJASKLDFJASLKDFJASKLDFJASDKLFJASDFKLJASDFKLASJDFKLASJDFA" +
+                                          Description)
+                                      .substring(0, 75) +
+                                  "...",
+                              //overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -170,6 +204,63 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
         ),
       ),
     );
+  }
+
+  Widget heartButton(Future<DocumentList?> favoritesFuture, String classifiedID,
+      String classified_type) {
+    return FutureBuilder(
+      future: favoritesFuture,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return IconButton(
+              onPressed: () {
+                createUserFavorite(
+                  classifiedID,
+                  classified_type,
+                );
+              },
+              icon: const Icon(Icons.refresh));
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          DocumentList? listOfFavs = snapshot.data;
+          if (isFavorite(snapshot.data, classifiedID)) {
+            return IconButton(
+                onPressed: () {
+                  deleteUserFavorite(
+                    classifiedID,
+                  );
+                },
+                icon: const Icon(Icons.favorite));
+          } else {
+            return IconButton(
+                onPressed: () {
+                  createUserFavorite(
+                    classifiedID,
+                    classified_type,
+                  );
+                },
+                icon: const Icon(Icons.favorite_border));
+          }
+        } else {
+          return const Text("Error");
+        }
+      },
+    );
+  }
+
+  bool isFavorite(DocumentList? favoritesList, String classifiedID) {
+    if (favoritesList != null) {
+      for (var v in favoritesList.documents) {
+        if (v.data["classified_id"] == classifiedID) {
+          debugPrint(
+              "Checking " + v.data["classified_id"] + " == " + classifiedID);
+          return true;
+        }
+      }
+    } else {
+      debugPrint("favoritesList was null");
+    }
+
+    return false;
   }
 
   Future<List<Document>> getClassifiedsList(
@@ -191,8 +282,8 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
         queries: anQueries);
 
     DocumentList finishedResult = await result;
-    debugPrint(finishedResult.toString());
-    debugPrint(finishedResult.documents.length.toString());
+    //debugPrint(finishedResult.toString());
+    //debugPrint(finishedResult.documents.length.toString());
     //debugPrint(finishedResult.documents[0].data["name"].toString());
 
     return finishedResult.documents;

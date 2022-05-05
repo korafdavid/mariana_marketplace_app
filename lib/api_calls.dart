@@ -178,12 +178,26 @@ Future<Document> createClassified(String name, String price, String description,
   return result;
 }
 
-//Get alll the documents as Documentlist in a collection
-Future<DocumentList> getAllCollectionDocuments(String collectionID) async {
+Future<DocumentList?> getAccountFavorites() async {
+  try {
+    User? myUser = await getLoggedInUser();
+    Future<DocumentList> returnList = getAllCollectionDocuments(
+        userFavoritesCollectionID, [Query.equal("user_id", myUser?.$id)]);
+    return returnList;
+  } catch (e) {
+    debugPrint("Error during getAccountFavorites: $e");
+    return null;
+  }
+}
+
+//Get all the documents as Documentlist in a collection
+Future<DocumentList> getAllCollectionDocuments(String collectionID,
+    [List<dynamic> queryList = const []]) async {
   debugPrint("Got here getAllCollectionDocuments trying collection id: " +
       collectionID);
   Future<DocumentList> result = database.listDocuments(
     collectionId: collectionID,
+    queries: queryList,
   );
 
   return result;
@@ -242,8 +256,64 @@ Future<Uint8List?> getFilePreview(
     height: height,
   );
 
-  debugPrint("Attempting to get bucket: $bucketID fileID $fileID");
-  debugPrint(returnValue.toString());
+  //debugPrint("Attempting to get bucket: $bucketID fileID $fileID");
+  //debugPrint(returnValue.toString());
 
   return returnValue;
+}
+
+Future<Document?> createUserFavorite(
+    String classifiedID, String classifiedType) async {
+  client
+          .setEndpoint(appwriteEndpoint) // Your API Endpoint
+          .setProject(appwriteProjectID) // Your project ID
+      ;
+
+  try {
+    //Wait for logged in user
+    User? awaitedUser = await getLoggedInUser();
+    String? userID = awaitedUser?.$id;
+
+    Future<Document> result = database.createDocument(
+      collectionId: userFavoritesCollectionID,
+      documentId: 'unique()',
+      data: {
+        "user_id": userID,
+        "classified_id": classifiedID,
+        "classified_type": classifiedType,
+      },
+    );
+
+    return result;
+  } catch (e) {
+    debugPrint("Couldn't create user favorite, error: $e");
+    return null;
+  }
+}
+
+void deleteUserFavorite(String classifiedID) async {
+  User? myUser;
+
+  try {
+    myUser = await getLoggedInUser();
+  } catch (e) {
+    debugPrint("Error during deleteUserFavorite: $e");
+  }
+
+  //Find the classified we want to delete
+  DocumentList queryDocuments =
+      await getAllCollectionDocuments(userFavoritesCollectionID, [
+    Query.equal("classified_id", classifiedID),
+  ]);
+
+  debugPrint("Matching documents length when running deleteUserFavorite: " +
+      queryDocuments.documents.length.toString());
+
+  for (var value in queryDocuments.documents) {
+    debugPrint("Attempting to delete favorite ID: " + value.data["\$id"]);
+    Future result = database.deleteDocument(
+      collectionId: userFavoritesCollectionID,
+      documentId: value.data["\$id"],
+    );
+  }
 }
