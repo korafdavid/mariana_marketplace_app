@@ -44,6 +44,167 @@ Future<User?> getLoggedInUser() async {
   }
 }
 
+// Stuff from sign in screen
+Future<String?> signupUser(
+    String firstname,
+    String lastname,
+    String email,
+    String password,
+    String phone,
+    String birthday,
+    String address,
+    String island) async {
+  //Concat fullname
+  final String fullName = ((firstname ?? "") + " " + (lastname ?? ""));
+
+  try {
+    //Sign up user
+    User signedUpUser = await registerUserAccount(fullName, email, password);
+    //Create session
+    Session createdSession = await startUserSession(email, password);
+    //Update user account name
+    User updatedAccountNameAccount = await updateAccountName(fullName);
+    //Create database entry for user
+    Document userInfoDocument = await createUserInfoEntry(
+        signedUpUser.$id,
+        firstname ?? "Missing",
+        lastname ?? "Missing",
+        email,
+        phone ?? "Missing",
+        birthday ?? "Missing",
+        address ?? "Missing",
+        island ?? "Missing");
+    //Update user prefs
+    User updatedUser = await updateUserPrefs(
+        firstname ?? "Missing",
+        lastname ?? "Missing",
+        email,
+        phone ?? "Missing",
+        birthday ?? "Missing",
+        address ?? "Missing",
+        island ?? "Missing");
+
+    //Everything successfully completed above, return null so caller knows we succeeded
+    return null;
+  } catch (e) {
+    final String errorString =
+        "Did not complete user signup fully, error: " + e.toString();
+    debugPrint(errorString);
+    return "Could not complete user signup";
+  }
+}
+
+Future<User> registerUserAccount(
+    String fullname, String email, String password) {
+  Future<User> result = account.create(
+    userId: 'unique()',
+    name: fullname,
+    email: email,
+    password: password,
+  );
+
+  return result;
+
+  //result.then((response) {
+  //  print("Response for registerUserAccount was: " + response.toString());
+  //  return response;
+  //}).catchError((error) {
+  //  print(error.response);
+  //  return error.response;
+  //});
+}
+
+Future<Session> startUserSession(String anEmail, String anPassword) async {
+  Future<Session> result = account.createSession(
+    email: anEmail,
+    password: anPassword,
+  );
+
+  return result;
+  //result
+  //  .then((response) {
+  //    print(response);
+  //  }).catchError((error) {
+  //    print(error.response);
+  //});
+}
+
+Future<Document> createUserInfoEntry(
+    String anAccountID,
+    String anFirstName,
+    String anLastName,
+    String anEmail,
+    String anPhone,
+    String anBirthday,
+    String anAddress,
+    String anIsland) {
+  //
+  Future<Document> result = database.createDocument(
+      collectionId: accountDetailsCollectionID,
+      documentId: 'unique()',
+      data: {
+        "account_id": anAccountID,
+        "name": anFirstName + " " + anLastName,
+        "firstname": anFirstName,
+        "lastname": anLastName,
+        "email": anEmail,
+        "phone": anPhone,
+        "birthday": anBirthday,
+        "address": anAddress,
+        "island": anIsland
+      });
+
+  return result;
+
+  //result.then((response) {
+  //  print(response);
+  //  return response;
+  //}).catchError((error) {
+  //  print(error.response);
+  //  return error.response;
+  //});
+}
+
+Future<User> updateAccountName(String anName) {
+  Future<User> result = account.updateName(
+    name: anName,
+  );
+
+  return result;
+}
+
+Future<User> updateUserPrefs(
+    String anFirstName,
+    String anLastName,
+    String email,
+    String anPhone,
+    String anBirthday,
+    String anAddress,
+    String anIsland) {
+  //
+  Future<User> result = account.updatePrefs(
+    prefs: {
+      "firstname": anFirstName,
+      "lastname": anLastName,
+      "email": email,
+      "phone": anPhone,
+      "birthday": anBirthday,
+      "address": anAddress,
+      "island": anIsland
+    },
+  );
+
+  return result;
+
+  //result
+  //  .then((response) {
+  //    print(response);
+  //  }).catchError((error) {
+  //    print(error.response);
+  //});
+}
+//
+
 // delete all account sessions
 void deleteAllAccountSessions() {
   // Init SDK

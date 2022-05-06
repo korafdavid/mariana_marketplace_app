@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    deleteAllAccountSessions();
     //deleteAllDocumentsInCollection("624270bbd07133a901c9");
     //deleteAllFilesInBucket("6259fa52f2266bd32b41");
     return MaterialApp(

@@ -4,10 +4,12 @@ import 'dart:typed_data';
 import 'package:appwrite/models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:mariana_marketplace/api_calls.dart';
 import 'package:mariana_marketplace/classified_filter_screen.dart';
-
 import 'package:mariana_marketplace/secrets.dart';
+import 'package:mariana_marketplace/fav_button.dart';
+
 import 'package:appwrite/appwrite.dart';
 
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -173,8 +175,10 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
                             flex: 1,
                             child: Column(
                               children: [
-                                heartButton(
-                                    myFavorites, classifiedID, "standard")
+                                favButton(
+                                    favoritesFuture: myFavorites,
+                                    classifiedID: classifiedID,
+                                    classified_type: "standard")
                               ],
                             ),
                           ),
@@ -206,62 +210,62 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
     );
   }
 
-  Widget heartButton(Future<DocumentList?> favoritesFuture, String classifiedID,
-      String classified_type) {
-    return FutureBuilder(
-      future: favoritesFuture,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return IconButton(
-              onPressed: () {
-                createUserFavorite(
-                  classifiedID,
-                  classified_type,
-                );
-              },
-              icon: const Icon(Icons.refresh));
-        } else if (snapshot.connectionState == ConnectionState.done) {
-          DocumentList? listOfFavs = snapshot.data;
-          if (isFavorite(snapshot.data, classifiedID)) {
-            return IconButton(
-                onPressed: () {
-                  deleteUserFavorite(
-                    classifiedID,
-                  );
-                },
-                icon: const Icon(Icons.favorite));
-          } else {
-            return IconButton(
-                onPressed: () {
-                  createUserFavorite(
-                    classifiedID,
-                    classified_type,
-                  );
-                },
-                icon: const Icon(Icons.favorite_border));
-          }
-        } else {
-          return const Text("Error");
-        }
-      },
-    );
-  }
-
-  bool isFavorite(DocumentList? favoritesList, String classifiedID) {
-    if (favoritesList != null) {
-      for (var v in favoritesList.documents) {
-        if (v.data["classified_id"] == classifiedID) {
-          debugPrint(
-              "Checking " + v.data["classified_id"] + " == " + classifiedID);
-          return true;
-        }
-      }
-    } else {
-      debugPrint("favoritesList was null");
-    }
-
-    return false;
-  }
+  //Widget heartButton(Future<DocumentList?> favoritesFuture, String classifiedID,
+  //    String classified_type) {
+  //  return FutureBuilder(
+  //    future: favoritesFuture,
+  //    builder: (BuildContext context, AsyncSnapshot snapshot) {
+  //      if (snapshot.connectionState == ConnectionState.waiting) {
+  //        return IconButton(
+  //            onPressed: () {
+  //              createUserFavorite(
+  //                classifiedID,
+  //                classified_type,
+  //              );
+  //            },
+  //            icon: const Icon(Icons.refresh));
+  //      } else if (snapshot.connectionState == ConnectionState.done) {
+  //        DocumentList? listOfFavs = snapshot.data;
+  //        if (isFavorite(snapshot.data, classifiedID)) {
+  //          return IconButton(
+  //              onPressed: () {
+  //                deleteUserFavorite(
+  //                  classifiedID,
+  //                );
+  //              },
+  //              icon: const Icon(Icons.favorite));
+  //        } else {
+  //          return IconButton(
+  //              onPressed: () {
+  //                createUserFavorite(
+  //                  classifiedID,
+  //                  classified_type,
+  //                );
+  //              },
+  //              icon: const Icon(Icons.favorite_border));
+  //        }
+  //      } else {
+  //        return const Text("Error");
+  //      }
+  //    },
+  //  );
+  //}
+//
+  //bool isFavorite(DocumentList? favoritesList, String classifiedID) {
+  //  if (favoritesList != null) {
+  //    for (var v in favoritesList.documents) {
+  //      debugPrint(
+  //          "Checking " + v.data["classified_id"] + " == " + classifiedID);
+  //      if (v.data["classified_id"] == classifiedID) {
+  //        return true;
+  //      }
+  //    }
+  //  } else {
+  //    debugPrint("favoritesList was null");
+  //  }
+//
+  //  return false;
+  //}
 
   Future<List<Document>> getClassifiedsList(
       int aOffset, int aLimit, List anQueries) async {
