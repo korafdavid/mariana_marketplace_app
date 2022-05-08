@@ -273,7 +273,8 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
     Client client = Client();
     Database database = Database(client);
 
-    debugPrint("Calling getClassifiedsList with queries");
+    debugPrint(
+        "Calling getClassifiedsList with queries: " + anQueries.toString());
 
     client
             .setEndpoint(appwriteEndpoint) // Your API Endpoint

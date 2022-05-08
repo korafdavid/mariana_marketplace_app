@@ -6,85 +6,60 @@ import 'package:image_picker/image_picker.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:mariana_marketplace/api_calls.dart';
 import 'package:mariana_marketplace/landing_screen.dart';
+import 'package:intl/intl.dart';
 
-class LoginSignUpScreen extends StatefulWidget {
-  LoginSignUpScreen({Key? key}) : super(key: key);
+class SignUpForm extends StatefulWidget {
+  SignUpForm({Key? key}) : super(key: key);
 
   @override
-  State<LoginSignUpScreen> createState() => _LoginSignUpScreenState();
+  State<SignUpForm> createState() => _SignUpFormState();
 }
 
-class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
+class _SignUpFormState extends State<SignUpForm> {
   //Form Vars
   final _formKey = GlobalKey<FormState>();
-  String title = "";
-  String price = "";
-  String description = "";
-  String categorySelectedValue = "Announcements";
-  List<String> categorySelectionList = [
-    'Announcements',
-    'Appliances',
-    'Auto Parts',
-    'Baby',
-    'Books and Media',
-    'Clothing and Apperal',
-    'Computers',
-    'Cycling',
-    'Electronics',
-    'Fitness Equipment',
-    'For Trade or Barter',
-    'Free',
-    'Furniture',
-    'General',
-    'Home',
-    'Garden',
-    'Hunting',
-    'Fishing',
-    'Industrial',
-    'Livestock',
-    'Musical Instruments',
-    'Other Real Estate',
-    'Outdoors',
-    'Pets',
-    'Services',
-    'Tickets',
-    'Toys',
-    'Water Sports',
-    'Weddings',
-    'Uncategorized'
-  ];
-  String conditionSelectedValue = "New";
-  List<String> conditionsSelectionList = [
-    'New',
-    'Used - Excellent',
-    'Used - Good',
-    'Used - Fair',
-    'Used - Poor',
-    'Used - Damaged'
-  ];
 
-  Future? uploadingClassified;
+  //DateTime Stuff
+  DateTime selectDate = DateTime.now();
+  DateFormat dayMonthYear = DateFormat('dd/MM/yyyy');
+  final _dateTextFieldController = TextEditingController();
 
-  //Image Picker Vars
-  final ImagePicker _picker = ImagePicker();
-  List<XFile>? _imageFileList = [];
+  String firstname = "";
+  String lastname = "";
+  String email = "";
+  String password = "";
+  String phone = "";
+  String birthday = "";
+  String address = "";
+  String islandSelectedValue = "Saipan";
+  List<String> categorySelectionList = ['Saipan', 'Tinian', 'Rota'];
 
-  //Method for selecting images
-  void selectImages() async {
-    List<XFile>? selectedImages = await _picker.pickMultiImage();
+  Future? signingUpUser;
 
-    if (selectedImages!.isNotEmpty) {
-      _imageFileList!.addAll(selectedImages);
+  _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectDate, // Refer step 1
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2025),
+    );
+    if (picked != null && picked != selectDate) {
+      setState(() {
+        selectDate = picked;
+      });
+      _dateTextFieldController.text =
+          dayMonthYear.format(selectDate).toString();
+      _dateTextFieldController.value = TextEditingValue(
+        text: (dayMonthYear.format(selectDate).toString()),
+      );
     }
-    debugPrint("Image list length: " + _imageFileList!.length.toString());
-    setState(() {});
   }
 
   //Widget for submit button + loading indicator
-  Widget? submitButton(Future? uploadingClassified) {
-    if (uploadingClassified != null) {
+  Widget? signUpButton(Future? signingUp) {
+    if (signingUp != null) {
       return FutureBuilder(
-        future: uploadingClassified,
+        future: signingUp,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             int seconds = 2;
@@ -92,17 +67,17 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
               Duration(seconds: seconds),
               (() async {
                 debugPrint(
-                    "Finished uploading classified, moving to landing after $seconds seconds.");
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const LandingScreen(),
-                  ),
-                );
+                    "Signed up, moving to landing after $seconds seconds.");
+                //Navigator.of(context).pushReplacement(
+                //  MaterialPageRoute(
+                //    builder: (context) => const LandingScreen(),
+                //  ),
+                //);
               }),
             );
             return Text("Finished");
           } else {
-            return Text("Uploading Classified, Please Wait.");
+            return Text("Signing up, please wait.");
           }
         },
       );
@@ -115,11 +90,11 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("Create Classified"),
+        title: Text("Sign Up"),
       ),
       body: Container(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -129,54 +104,122 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                   children: <Widget>[
                     TextFormField(
                       // The validator receives the text that the user has entered.
-                      decoration: const InputDecoration(labelText: "Title"),
+                      decoration:
+                          const InputDecoration(labelText: "First Name"),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Please enter your first name';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         setState(() {
-                          debugPrint("Setting title = " + value!);
-                          title = value;
+                          debugPrint("Setting First Name = " + value!);
+                          firstname = value;
+                        });
+                      },
+                    ),
+                    TextFormField(
+                      // The validator receives the text that the user has entered.
+                      decoration: const InputDecoration(labelText: "Last Name"),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your last name';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        setState(() {
+                          debugPrint("Setting Last Name = " + value!);
+                          lastname = value;
+                        });
+                      },
+                    ),
+                    TextFormField(
+                      // The validator receives the text that the user has entered.
+                      decoration: const InputDecoration(labelText: "Email"),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your last name';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        setState(() {
+                          debugPrint("Setting Last Name = " + value!);
+                          email = value;
+                        });
+                      },
+                    ),
+                    TextFormField(
+                      // The validator receives the text that the user has entered.
+                      decoration: const InputDecoration(labelText: "Password"),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        setState(() {
+                          //debugPrint("Setting password = " + value!);
+                          password = value!;
                         });
                       },
                     ),
                     TextFormField(
                       // The validator receives the text that the user has entered.
                       decoration: const InputDecoration(
-                          hintText: "1",
-                          labelText: "Price",
-                          icon: Icon(Icons.attach_money)),
+                          labelText: "Primary Phone Number"),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Please enter your password';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         setState(() {
-                          price = value!;
+                          //debugPrint("Setting password = " + value!);
+                          phone = value!;
                         });
                       },
                     ),
+                    TextFormField(
+                      // The validator receives the text that the user has entered.
+                      decoration: const InputDecoration(labelText: "Birthday"),
+                      controller: _dateTextFieldController,
+                      onTap: () {
+                        //Stops keyboard from appearing
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                        _selectDate(context);
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your birthday';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        //
+                      },
+                    ),
                     DropdownButtonFormField<String>(
-                      value: categorySelectedValue,
-                      decoration: const InputDecoration(labelText: "Category"),
+                      value: islandSelectedValue,
+                      decoration: const InputDecoration(
+                          labelText: "Island of Residence"),
                       hint: const Text(
                         'choose one',
                       ),
                       isExpanded: true,
                       onChanged: (value) {
                         setState(() {
-                          categorySelectedValue = value!;
+                          islandSelectedValue = value!;
                         });
                       },
                       onSaved: (value) {
                         setState(() {
-                          categorySelectedValue = value!;
+                          islandSelectedValue = value!;
                         });
                       },
                       validator: (value) {
@@ -195,97 +238,28 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                         );
                       }).toList(),
                     ),
-                    DropdownButtonFormField<String>(
-                      value: conditionSelectedValue,
-                      decoration: const InputDecoration(labelText: "Condition"),
-                      hint: const Text(
-                        'choose one',
-                      ),
-                      isExpanded: true,
-                      onChanged: (value) {
-                        setState(() {
-                          conditionSelectedValue = value!;
-                        });
-                      },
-                      onSaved: (value) {
-                        setState(() {
-                          conditionSelectedValue = value!;
-                        });
-                      },
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "can't empty";
-                        } else {
-                          return null;
-                        }
-                      },
-                      items: conditionsSelectionList.map((String val) {
-                        return DropdownMenuItem<String>(
-                          value: val,
-                          child: Text(
-                            val,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    TextFormField(
-                      // The validator receives the text that the user has entered.
-                      decoration:
-                          const InputDecoration(labelText: "Description"),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        setState(() {
-                          description = value!;
-                        });
-                      },
-                    ),
                   ],
                 ),
-              ),
-              Flexible(
-                flex: 1,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(8, 20, 8, 20),
-                  child: GridView.builder(
-                      itemCount: _imageFileList!.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3),
-                      itemBuilder: (BuildContext context, int index) {
-                        return Image.file(
-                          File(_imageFileList![index].path),
-                          fit: BoxFit.cover,
-                        );
-                      }),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: selectImages,
-                child: const Text('Pick Images'),
               ),
               ElevatedButton(
                 onPressed: () {
                   // Validate returns true if the form is valid, or false otherwise.
-                  if (_formKey.currentState!.validate() &&
-                      _imageFileList!.isNotEmpty) {
+                  if (_formKey.currentState!.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
 
                     _formKey.currentState?.save();
 
                     setState(() {
-                      uploadingClassified = createClassified(
-                          title,
-                          price,
-                          description,
-                          conditionSelectedValue,
-                          categorySelectedValue,
-                          _imageFileList!);
+                      signingUpUser = signupUser(
+                          firstname,
+                          lastname,
+                          email,
+                          password,
+                          phone,
+                          birthday,
+                          address,
+                          islandSelectedValue);
                     });
 
                     //If you want immidiate screen switch after clicking submit:
@@ -301,7 +275,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                     );
                   }
                 },
-                child: submitButton(uploadingClassified),
+                child: signUpButton(signingUpUser),
               )
             ],
           ),

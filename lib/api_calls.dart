@@ -55,34 +55,27 @@ Future<String?> signupUser(
     String address,
     String island) async {
   //Concat fullname
-  final String fullName = ((firstname ?? "") + " " + (lastname ?? ""));
+  final String fullName = ((firstname) + " " + (lastname));
 
   try {
+    debugPrint("0 startingSignup");
     //Sign up user
     User signedUpUser = await registerUserAccount(fullName, email, password);
+    debugPrint("1 signedUpUser");
     //Create session
     Session createdSession = await startUserSession(email, password);
+    debugPrint("2 createdSession");
     //Update user account name
     User updatedAccountNameAccount = await updateAccountName(fullName);
+    debugPrint("3 updatedAccountNameAccount");
     //Create database entry for user
-    Document userInfoDocument = await createUserInfoEntry(
-        signedUpUser.$id,
-        firstname ?? "Missing",
-        lastname ?? "Missing",
-        email,
-        phone ?? "Missing",
-        birthday ?? "Missing",
-        address ?? "Missing",
-        island ?? "Missing");
+    Document userInfoDocument = await createUserInfoEntry(signedUpUser.$id,
+        firstname, lastname, email, phone, birthday, address, island);
+    debugPrint("4 userInfoDocument");
     //Update user prefs
     User updatedUser = await updateUserPrefs(
-        firstname ?? "Missing",
-        lastname ?? "Missing",
-        email,
-        phone ?? "Missing",
-        birthday ?? "Missing",
-        address ?? "Missing",
-        island ?? "Missing");
+        firstname, lastname, email, phone, birthday, address, island);
+    debugPrint("5 updatedUserPrefs");
 
     //Everything successfully completed above, return null so caller knows we succeeded
     return null;
@@ -95,11 +88,10 @@ Future<String?> signupUser(
 }
 
 Future<User> registerUserAccount(
-    String fullname, String email, String password) {
+    String fullname, String anEmail, String password) {
   Future<User> result = account.create(
     userId: 'unique()',
-    name: fullname,
-    email: email,
+    email: anEmail,
     password: password,
   );
 
@@ -208,17 +200,8 @@ Future<User> updateUserPrefs(
 // delete all account sessions
 void deleteAllAccountSessions() {
   // Init SDK
-  client
-          .setEndpoint(appwriteEndpoint) // Your API Endpoint
-          .setProject(appwriteProjectID) // Your project ID
-      ;
+  debugPrint("Deleted all account sessions due to deleteAllAccountSessions()");
   Future result = account.deleteSessions();
-
-  result.then((response) {
-    print(response);
-  }).catchError((error) {
-    print(error.response);
-  });
 }
 
 // upload a single image
