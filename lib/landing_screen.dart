@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mariana_marketplace/classified_full_display.dart';
 import 'package:mariana_marketplace/classifieds_screen.dart';
 import 'package:mariana_marketplace/create_classified.dart';
 import 'package:mariana_marketplace/sign_up_screen.dart';
@@ -90,7 +91,10 @@ class _LandingScreenState extends State<LandingScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => TestScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => const ClassifiedDisplayScreen(
+                                  classifiedID: '6260ca6f10de648615b7',
+                                )),
                       );
                     },
                     color: Colors.black,

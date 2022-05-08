@@ -461,3 +461,39 @@ void deleteUserFavorite(String classifiedID) async {
     );
   }
 }
+
+Future<Document?> getDocument(String collectionID, String documentID) {
+  Future<Document?> result = database.getDocument(
+    collectionId: collectionID,
+    documentId: documentID,
+  );
+
+  return result;
+}
+
+Future<Document?> getUserInfo(Future<Document?> classifiedsDoc) async {
+  try {
+    //Future<Document?> classifiedsDoc =
+    //    getDocument(classifiedsCollectionId, "6260ca6f10de648615b7");
+
+    Document? awaitedClassifiedDoc = await classifiedsDoc;
+
+    String? classifiedPosterID =
+        awaitedClassifiedDoc?.data["account_id"].toString();
+    debugPrint(
+        "classifiedPosterID to string: " + classifiedPosterID.toString());
+
+    DocumentList matchingUserDocs = await getAllCollectionDocuments(
+        accountDetailsCollectionID,
+        [Query.equal("account_id", classifiedPosterID)]);
+
+    debugPrint(
+        "matchingUserDocs to string: " + matchingUserDocs.total.toString());
+
+    Document? docToReturn = matchingUserDocs.documents.first;
+    return docToReturn;
+  } catch (e) {
+    debugPrint("Couldn't getUserInfo, error: $e");
+    debugPrint("It is possible this user was deleted");
+  }
+}

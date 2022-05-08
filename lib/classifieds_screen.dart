@@ -9,6 +9,7 @@ import 'package:mariana_marketplace/api_calls.dart';
 import 'package:mariana_marketplace/classified_filter_screen.dart';
 import 'package:mariana_marketplace/secrets.dart';
 import 'package:mariana_marketplace/fav_button.dart';
+import 'package:mariana_marketplace/classified_full_display.dart';
 
 import 'package:appwrite/appwrite.dart';
 
@@ -121,89 +122,101 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
       padding: const EdgeInsets.fromLTRB(10, 7, 10, 8),
       height: 200,
       width: double.maxFinite,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        elevation: 10,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: classifiedThumbnail(
-                        "6259fa52f2266bd32b41",
-                        ThumbnailID,
-                        150,
-                        150,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ClassifiedDisplayScreen(
+                      classifiedID: classifiedID,
+                    )),
+          );
+        },
+        child: Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          elevation: 10,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: classifiedThumbnail(
+                          "6259fa52f2266bd32b41",
+                          ThumbnailID,
+                          150,
+                          150,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  Title,
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text("\$$Price"),
-                              ],
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    Title,
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text("\$$Price"),
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Column(
-                              children: [
-                                favButton(
-                                    favoritesFuture: myFavorites,
-                                    classifiedID: classifiedID,
-                                    classified_type: "standard")
-                              ],
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  favButton(
+                                      favoritesFuture: myFavorites,
+                                      classifiedID: classifiedID,
+                                      classified_type: "standard")
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              ("Description: BLEBIBJEIJARIERJALADKFJASKLDFJASLKDFJASKLDFJASDKLFJASDFKLJASDFKLASJDFKLASJDFA" +
-                                          Description)
-                                      .substring(0, 75) +
-                                  "...",
-                              //overflow: TextOverflow.ellipsis,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                ("Description: BLEBIBJEIJARIERJALADKFJASKLDFJASLKDFJASKLDFJASDKLFJASDFKLJASDFKLASJDFKLASJDFA" +
+                                            Description)
+                                        .substring(0, 75) +
+                                    "...",
+                                //overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
