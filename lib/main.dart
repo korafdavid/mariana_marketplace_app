@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:appwrite/appwrite.dart';
 import 'secrets.dart';
-import 'login_screen.dart';
+import 'old_login_screen.dart';
 import 'landing_screen.dart';
 import 'package:mariana_marketplace/api_calls.dart';
 
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    //ToDo: Create an anonymouse user session to actually display ads
+    //TODO?: Create an anonymouse user session to actually display ads?
     //deleteAllAccountSessions();
     //deleteAllDocumentsInCollection("624270bbd07133a901c9");
     //deleteAllFilesInBucket("6259fa52f2266bd32b41");
