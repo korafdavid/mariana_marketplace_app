@@ -56,6 +56,36 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
+  Widget createClassifiedButton() {
+    return FutureBuilder(
+      future: loggedIn,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return Expanded(
+          flex: 3,
+          child: Card(
+            color: Colors.blueGrey,
+            child: IconButton(
+              icon: const Icon(
+                Icons.add_circle_outline,
+              ),
+              onPressed: () {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.data == true) {
+                  showAlertDialog(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Must log in to create listings."),
+                  ));
+                }
+              },
+              color: Colors.black,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,21 +115,7 @@ class _LandingScreenState extends State<LandingScreen> {
                     color: Colors.black,
                   ),
                 ),
-                Expanded(
-                  flex: 3,
-                  child: Card(
-                    color: Colors.blueGrey,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.add_circle_outline,
-                      ),
-                      onPressed: () {
-                        showAlertDialog(context);
-                      },
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
+                createClassifiedButton(),
                 Expanded(
                   child: Card(
                     color: Colors.blueGrey,
