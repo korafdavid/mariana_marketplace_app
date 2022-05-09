@@ -173,13 +173,22 @@ class _ClassifiedsScreenState extends State<ClassifiedsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    Title,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
+                                  Expanded(
+                                    child: Text(
+                                      Title,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 3,
+                                    ),
                                   ),
-                                  Text("\$$Price"),
+                                  Expanded(
+                                      child: Text(
+                                    "\$$Price",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  )),
                                 ],
                               ),
                             ),

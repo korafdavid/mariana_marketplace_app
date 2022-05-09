@@ -86,15 +86,12 @@ class _LandingScreenState extends State<LandingScreen> {
                   color: Colors.blueGrey,
                   child: IconButton(
                     icon: const Icon(
-                      Icons.list,
+                      Icons.favorite,
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const ClassifiedDisplayScreen(
-                                  classifiedID: '6260ca6f10de648615b7',
-                                )),
+                        MaterialPageRoute(builder: (context) => TestScreen()),
                       );
                     },
                     color: Colors.black,
@@ -247,13 +244,68 @@ class _LandingScreenState extends State<LandingScreen> {
                 ],
               ),
             ),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ClassifiedsScreen(queries: [])),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          // color: Colors.black,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Card(
+                          color: Colors.blueGrey,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          // shadowColor: Colors.grey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Spacer(),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.home,
+                                      size: 120,
+                                    ),
+                                  ]),
+                              const Spacer(),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Align(
+                                      alignment: FractionalOffset.bottomCenter,
+                                      child: Text(
+                                        'Homes',
+                                        style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ]),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
