@@ -7,6 +7,7 @@ import 'package:mariana_marketplace/test_screen.dart';
 import 'package:mariana_marketplace/old_login_screen.dart';
 import 'package:mariana_marketplace/car_screen.dart';
 import 'package:mariana_marketplace/api_calls.dart';
+import 'package:mariana_marketplace/login_or_signup_screen.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
@@ -22,26 +23,26 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget checkLoginIconButtonStatus(AsyncSnapshot snapshot) {
     print(snapshot.connectionState);
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return loginIconButton(Icons.key);
+      return loginIconButton(Icons.key, loginOrSignupScreen());
     } else if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
-        return loginIconButton(Icons.error);
+        return loginIconButton(Icons.error, loginOrSignupScreen());
       } else if (snapshot.hasData) {
         if (snapshot.data == true) {
-          return loginIconButton(Icons.person);
+          return loginIconButton(Icons.person, loginOrSignupScreen());
         } else {
-          return loginIconButton(Icons.login);
+          return loginIconButton(Icons.login, loginOrSignupScreen());
         }
       } else {
         return const Text('Empty data');
       }
     } else {
       debugPrint("Issue with login Icon");
-      return loginIconButton(Icons.error);
+      return loginIconButton(Icons.error, loginOrSignupScreen());
     }
   }
 
-  IconButton loginIconButton(IconData iconData) {
+  IconButton loginIconButton(IconData iconData, Widget onPressedNav) {
     return IconButton(
       icon: Icon(
         iconData,
@@ -49,7 +50,7 @@ class _LandingScreenState extends State<LandingScreen> {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SignUpForm()),
+          MaterialPageRoute(builder: (context) => onPressedNav),
         );
       },
       color: Colors.black,

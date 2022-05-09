@@ -66,7 +66,7 @@ Future<String?> signupUser(
     User signedUpUser = await registerUserAccount(fullName, email, password);
     debugPrint("1 signedUpUser");
     //Create session
-    Session createdSession = await startUserSession(email, password);
+    Session createdSession = await loginUserAccount(email, password);
     debugPrint("2 createdSession");
     //Update user account name
     User updatedAccountNameAccount = await updateAccountName(fullName);
@@ -109,19 +109,15 @@ Future<User> registerUserAccount(
   //});
 }
 
-Future<Session> startUserSession(String anEmail, String anPassword) async {
+Future<Session> loginUserAccount(String anEmail, String anPassword) {
   Future<Session> result = account.createSession(
     email: anEmail,
     password: anPassword,
   );
 
+  debugPrint("Attempting user login with email: $anEmail");
+
   return result;
-  //result
-  //  .then((response) {
-  //    print(response);
-  //  }).catchError((error) {
-  //    print(error.response);
-  //});
 }
 
 Future<Document> createUserInfoEntry(
