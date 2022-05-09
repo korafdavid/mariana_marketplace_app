@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //TODO?: Create an anonymous user session to actually display ads?
     //deleteAllAccountSessions();
-    //deleteAllDocumentsInCollection("624270bbd07133a901c9");
+    //deleteAllDocumentsInCollection(accountDetailsCollectionID);
     //deleteAllFilesInBucket("6259fa52f2266bd32b41");
     return MaterialApp(
       title: 'Flutter Demo',

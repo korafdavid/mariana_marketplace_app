@@ -168,6 +168,7 @@ class _SignUpFormState extends State<SignUpForm> {
                           password = value!;
                         });
                       },
+                      obscureText: true,
                     ),
                     TextFormField(
                       // The validator receives the text that the user has entered.
@@ -176,7 +177,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
+                          return 'Please enter your phone number';
                         }
                         return null;
                       },
