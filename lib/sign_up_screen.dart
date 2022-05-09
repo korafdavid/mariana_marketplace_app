@@ -46,6 +46,7 @@ class _SignUpFormState extends State<SignUpForm> {
     if (picked != null && picked != selectDate) {
       setState(() {
         selectDate = picked;
+        birthday = dayMonthYear.format(selectDate).toString();
       });
       _dateTextFieldController.text =
           dayMonthYear.format(selectDate).toString();
@@ -68,11 +69,12 @@ class _SignUpFormState extends State<SignUpForm> {
               (() async {
                 debugPrint(
                     "Signed up, moving to landing after $seconds seconds.");
-                //Navigator.of(context).pushReplacement(
-                //  MaterialPageRoute(
-                //    builder: (context) => const LandingScreen(),
-                //  ),
-                //);
+                //Move after sign up
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const LandingScreen(),
+                  ),
+                );
               }),
             );
             return Text("Finished");

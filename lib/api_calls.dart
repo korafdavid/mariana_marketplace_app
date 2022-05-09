@@ -57,6 +57,9 @@ Future<String?> signupUser(
   //Concat fullname
   final String fullName = ((firstname) + " " + (lastname));
 
+  debugPrint(
+      "Attempting signupUser with values: firstname: $firstname, birthday: $birthday");
+
   try {
     debugPrint("0 startingSignup");
     //Sign up user

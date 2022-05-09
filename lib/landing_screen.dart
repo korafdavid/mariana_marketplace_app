@@ -19,18 +19,6 @@ class _LandingScreenState extends State<LandingScreen> {
   int _counter = 0;
   final Future<bool> loggedIn = getLoggedIn();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _resetCounter() {
-    setState(() {
-      _counter = 0;
-    });
-  }
-
   Widget checkLoginIconButtonStatus(AsyncSnapshot snapshot) {
     print(snapshot.connectionState);
     if (snapshot.connectionState == ConnectionState.waiting) {
