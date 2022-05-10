@@ -38,7 +38,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 debugPrint(
                     "Logged in, moving to landing after $seconds seconds.");
                 //Move after sign up
-                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LandingScreen()),
+                );
               }),
             );
             return const Text("Finished");

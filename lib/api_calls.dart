@@ -204,6 +204,11 @@ Future<Session?> getCurrentSession() {
   return result;
 }
 
+Future deleteCurrentSession() {
+  Future result = account.deleteSession(sessionId: 'current');
+  return result;
+}
+
 // delete all account sessions
 void deleteAllAccountSessions() {
   // Init SDK

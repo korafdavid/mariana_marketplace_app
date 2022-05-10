@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //TODO?: Create an anonymous user session to actually display ads?
-    deleteAllAccountSessions();
+    //deleteAllAccountSessions();
     //deleteAllDocumentsInCollection(accountDetailsCollectionID);
     //deleteAllFilesInBucket("6259fa52f2266bd32b41");
     //getAllAccountSessionsAwaited();

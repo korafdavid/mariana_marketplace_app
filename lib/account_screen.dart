@@ -16,6 +16,8 @@ class _AccountScreenState extends State<AccountScreen> {
   Future<User?> loggedInUser = getLoggedInUser();
   Future<Session?> currentSession = getCurrentSession();
 
+  Future? loggingOutUser;
+
   DateTime dateTimeFromUnix(int UnixTimeStamp) {
     return DateTime.fromMillisecondsSinceEpoch(UnixTimeStamp * 1000);
   }
@@ -114,6 +116,50 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
+  //Widget for submit button + loading indicator
+  Widget? logoutButtonText(Future? loggingOut) {
+    if (loggingOut != null) {
+      return FutureBuilder(
+        future: loggingOut,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            int seconds = 5;
+            Future WaitTwoSecs = Future.delayed(
+              Duration(seconds: seconds),
+              (() async {}),
+            );
+
+            //Do the stuff after waiting two seconds.
+            WaitTwoSecs.then((value) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Logged out.')),
+              );
+              Navigator.pop(context);
+            });
+
+            return const Text("Logged out, exiting.");
+          } else {
+            return const Text("Logging out, please wait.");
+          }
+        },
+      );
+    }
+    return const Text("Log Out");
+  }
+
+  Widget logoutButton() {
+    return ElevatedButton(
+      onPressed: () {
+        // Validate returns true if the form is valid, or false otherwise.
+
+        setState(() {
+          loggingOutUser = deleteCurrentSession();
+        });
+      },
+      child: logoutButtonText(loggingOutUser),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,10 +170,7 @@ class _AccountScreenState extends State<AccountScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            loggedInUserInfo(),
-            currentSessionInfo(),
-          ],
+          children: [loggedInUserInfo(), currentSessionInfo(), logoutButton()],
         ),
       ),
     );
