@@ -132,11 +132,13 @@ class _ClassifiedDisplayScreenState extends State<ClassifiedDisplayScreen> {
                       style: TextStyle(fontSize: 20),
                     ),
                     Text(
-                      "Price: " + snapshot.data.data["price"].toString(),
+                      "Price: \$" + snapshot.data.data["price"].toString(),
                       style: TextStyle(
                           color: Colors.blue, fontWeight: FontWeight.bold),
                     ),
-                    Text("Posted: " + numDaysAgoPosted + " days ago"),
+                    Text((numDaysAgoPosted != "0")
+                        ? "Posted: " + numDaysAgoPosted + " days ago"
+                        : "Posted: today."),
                     Divider(),
                     Text("Contact: "),
                     Divider(),

@@ -41,7 +41,7 @@ class _SignUpFormState extends State<SignUpForm> {
       context: context,
       initialDate: selectDate, // Refer step 1
       firstDate: DateTime(1900),
-      lastDate: DateTime(2025),
+      lastDate: DateTime.now(),
     );
     if (picked != null && picked != selectDate) {
       setState(() {
@@ -106,8 +106,14 @@ class _SignUpFormState extends State<SignUpForm> {
                   children: <Widget>[
                     TextFormField(
                       // The validator receives the text that the user has entered.
-                      decoration:
-                          const InputDecoration(labelText: "First Name"),
+                      decoration: InputDecoration(
+                        label: Row(
+                          children: const [
+                            Text("First Name"),
+                            Text(" *", style: TextStyle(color: Colors.red))
+                          ],
+                        ),
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your first name';
@@ -123,7 +129,14 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                     TextFormField(
                       // The validator receives the text that the user has entered.
-                      decoration: const InputDecoration(labelText: "Last Name"),
+                      decoration: InputDecoration(
+                        label: Row(
+                          children: const [
+                            Text("Last Name"),
+                            Text(" *", style: TextStyle(color: Colors.red))
+                          ],
+                        ),
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your last name';
@@ -139,7 +152,14 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                     TextFormField(
                       // The validator receives the text that the user has entered.
-                      decoration: const InputDecoration(labelText: "Email"),
+                      decoration: InputDecoration(
+                        label: Row(
+                          children: const [
+                            Text("Email"),
+                            Text(" *", style: TextStyle(color: Colors.red))
+                          ],
+                        ),
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your last name';
@@ -155,7 +175,14 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                     TextFormField(
                       // The validator receives the text that the user has entered.
-                      decoration: const InputDecoration(labelText: "Password"),
+                      decoration: InputDecoration(
+                        label: Row(
+                          children: const [
+                            Text("Password"),
+                            Text(" *", style: TextStyle(color: Colors.red))
+                          ],
+                        ),
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password';
@@ -172,8 +199,14 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                     TextFormField(
                       // The validator receives the text that the user has entered.
-                      decoration: const InputDecoration(
-                          labelText: "Primary Phone Number"),
+                      decoration: InputDecoration(
+                        label: Row(
+                          children: const [
+                            Text("Phone Number"),
+                            Text(" *", style: TextStyle(color: Colors.red))
+                          ],
+                        ),
+                      ),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -190,7 +223,14 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                     TextFormField(
                       // The validator receives the text that the user has entered.
-                      decoration: const InputDecoration(labelText: "Birthday"),
+                      decoration: InputDecoration(
+                        label: Row(
+                          children: const [
+                            Text("Birthday"),
+                            Text(" *", style: TextStyle(color: Colors.red))
+                          ],
+                        ),
+                      ),
                       controller: _dateTextFieldController,
                       onTap: () {
                         //Stops keyboard from appearing
@@ -209,8 +249,14 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                     DropdownButtonFormField<String>(
                       value: islandSelectedValue,
-                      decoration: const InputDecoration(
-                          labelText: "Island of Residence"),
+                      decoration: InputDecoration(
+                        label: Row(
+                          children: const [
+                            Text("Island"),
+                            Text(" *", style: TextStyle(color: Colors.red))
+                          ],
+                        ),
+                      ),
                       hint: const Text(
                         'choose one',
                       ),

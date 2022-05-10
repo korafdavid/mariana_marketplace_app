@@ -36,9 +36,10 @@ Future<User?> getLoggedInUser() async {
       ;
 
   try {
-    User result = await account.get();
-    debugPrint("User logged in: " + result.name);
-    return result;
+    return account.get();
+    //User result = await account.get();
+    //debugPrint("User logged in: " + result.name);
+    //return result;
   } catch (e) {
     debugPrint("Error attempting to see if user is logged in: " + e.toString());
   }
@@ -196,6 +197,13 @@ Future<User> updateUserPrefs(
 }
 //
 
+Future<Session?> getCurrentSession() {
+  Future<Session?> result = account.getSession(
+    sessionId: 'current',
+  );
+  return result;
+}
+
 // delete all account sessions
 void deleteAllAccountSessions() {
   // Init SDK
@@ -331,6 +339,27 @@ Future<DocumentList?> getAccountFavorites() async {
     debugPrint("Error during getAccountFavorites: $e");
     return null;
   }
+}
+
+Future<SessionList?> getAllAccountSessionsAwaited() async {
+  Future<SessionList?> allSessions = account.getSessions();
+
+  SessionList? theSessionList = await allSessions;
+
+  debugPrint("Number of sessions: " + theSessionList!.total.toString());
+
+  for (Session ses in theSessionList.sessions) {
+    debugPrint(ses.clientCode);
+    debugPrint(ses.clientEngine);
+    debugPrint(ses.clientName);
+    debugPrint(ses.clientType);
+    debugPrint(ses.ip);
+    //debugPrint(ses.expire);
+    debugPrint(ses.clientEngine);
+    debugPrint(ses.clientEngine);
+  }
+
+  return allSessions;
 }
 
 //Get all the documents as Documentlist in a collection

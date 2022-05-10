@@ -8,6 +8,7 @@ import 'package:mariana_marketplace/old_login_screen.dart';
 import 'package:mariana_marketplace/car_screen.dart';
 import 'package:mariana_marketplace/api_calls.dart';
 import 'package:mariana_marketplace/login_or_signup_screen.dart';
+import 'package:mariana_marketplace/account_screen.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
@@ -17,42 +18,53 @@ class LandingScreen extends StatefulWidget {
 }
 
 class _LandingScreenState extends State<LandingScreen> {
-  int _counter = 0;
   final Future<bool> loggedIn = getLoggedIn();
 
   Widget checkLoginIconButtonStatus(AsyncSnapshot snapshot) {
     print(snapshot.connectionState);
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return loginIconButton(Icons.key, loginOrSignupScreen());
+      return loginIconButton(Icons.key, () {
+        debugPrint("Doing nothing.");
+      });
     } else if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
-        return loginIconButton(Icons.error, loginOrSignupScreen());
+        return loginIconButton(Icons.error, () {
+          debugPrint("Doing nothing.");
+        });
       } else if (snapshot.hasData) {
         if (snapshot.data == true) {
-          return loginIconButton(Icons.person, loginOrSignupScreen());
+          debugPrint(snapshot.data.toString());
+          return loginIconButton(Icons.person, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AccountScreen()),
+            );
+          });
         } else {
-          return loginIconButton(Icons.login, loginOrSignupScreen());
+          return loginIconButton(Icons.login, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => loginOrSignupScreen()),
+            );
+          });
         }
       } else {
         return const Text('Empty data');
       }
     } else {
       debugPrint("Issue with login Icon");
-      return loginIconButton(Icons.error, loginOrSignupScreen());
+      return loginIconButton(Icons.error, () {
+        debugPrint("Doing nothing.");
+      });
     }
   }
 
-  IconButton loginIconButton(IconData iconData, Widget onPressedNav) {
+  IconButton loginIconButton(IconData iconData, VoidCallback onPressedDo) {
     return IconButton(
       icon: Icon(
         iconData,
       ),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => onPressedNav),
-        );
-      },
+      onPressed: onPressedDo,
       color: Colors.black,
     );
   }
