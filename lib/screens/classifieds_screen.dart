@@ -6,10 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:mariana_marketplace/api_calls.dart';
-import 'package:mariana_marketplace/classified_filter_screen.dart';
+import 'package:mariana_marketplace/screens/classified_filter_screen.dart';
 import 'package:mariana_marketplace/secrets.dart';
 import 'package:mariana_marketplace/fav_button.dart';
-import 'package:mariana_marketplace/classified_full_display.dart';
+import 'package:mariana_marketplace/screens/classified_full_display.dart';
 
 import 'package:appwrite/appwrite.dart';
 

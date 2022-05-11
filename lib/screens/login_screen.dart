@@ -5,8 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:mariana_marketplace/api_calls.dart';
-import 'package:mariana_marketplace/landing_screen.dart';
+import 'package:mariana_marketplace/screens/landing_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -56,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authNotifier = context.authNotifier;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -108,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // Validate returns true if the form is valid, or false otherwise.
                   if (_formKey.currentState!.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
@@ -117,8 +119,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     _formKey.currentState?.save();
 
                     setState(() {
-                      loggingInUser = loginUserAccount(email, password);
+                      //loggingInUser = loginUserAccount(email, password);
                     });
+
+                    if (!await context.authNotifier
+                        .createSession(email: email, password: password)) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              context.authNotifier.error ?? "Unknown error")));
+                    }
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LandingScreen()));
 
                     //If you want immidiate screen switch after clicking submit:
                     //Navigator.of(context).pushReplacement(MaterialPageRoute(

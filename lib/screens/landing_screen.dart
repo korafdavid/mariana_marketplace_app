@@ -1,14 +1,17 @@
+import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:mariana_marketplace/classified_full_display.dart';
-import 'package:mariana_marketplace/classifieds_screen.dart';
-import 'package:mariana_marketplace/create_classified.dart';
-import 'package:mariana_marketplace/sign_up_screen.dart';
+import 'package:mariana_marketplace/screens/classified_full_display.dart';
+import 'package:mariana_marketplace/screens/classifieds_screen.dart';
+import 'package:mariana_marketplace/screens/create_classified.dart';
+import 'package:mariana_marketplace/screens/sign_up_screen.dart';
 import 'package:mariana_marketplace/test_screen.dart';
-import 'package:mariana_marketplace/old_login_screen.dart';
-import 'package:mariana_marketplace/car_screen.dart';
+import 'package:mariana_marketplace/screens/old_login_screen.dart';
+import 'package:mariana_marketplace/screens/car_screen.dart';
 import 'package:mariana_marketplace/api_calls.dart';
-import 'package:mariana_marketplace/login_or_signup_screen.dart';
-import 'package:mariana_marketplace/account_screen.dart';
+import 'package:mariana_marketplace/screens/login_or_signup_screen.dart';
+import 'package:mariana_marketplace/screens/account_screen.dart';
+import 'package:mariana_marketplace/accountButton.dart';
+import 'package:mariana_marketplace/create_classified_button.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
@@ -18,7 +21,7 @@ class LandingScreen extends StatefulWidget {
 }
 
 class _LandingScreenState extends State<LandingScreen> {
-  final Future<bool> loggedIn = getLoggedIn();
+  //final Future<bool> loggedIn = getLoggedIn();
 
   Widget checkLoginIconButtonStatus(AsyncSnapshot snapshot) {
     print(snapshot.connectionState);
@@ -69,35 +72,35 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
-  Widget createClassifiedButton() {
-    return FutureBuilder(
-      future: loggedIn,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Expanded(
-          flex: 3,
-          child: Card(
-            color: Colors.blueGrey,
-            child: IconButton(
-              icon: const Icon(
-                Icons.add_circle_outline,
-              ),
-              onPressed: () {
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.data == true) {
-                  showAlertDialog(context);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Must log in to create listings."),
-                  ));
-                }
-              },
-              color: Colors.black,
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //Widget createClassifiedButton() {
+  //  return FutureBuilder(
+  //    future: loggedIn,
+  //    builder: (BuildContext context, AsyncSnapshot snapshot) {
+  //      return Expanded(
+  //        flex: 3,
+  //        child: Card(
+  //          color: Colors.blueGrey,
+  //          child: IconButton(
+  //            icon: const Icon(
+  //              Icons.add_circle_outline,
+  //            ),
+  //            onPressed: () {
+  //              if (snapshot.connectionState == ConnectionState.done &&
+  //                  snapshot.data == true) {
+  //                showAlertDialog(context);
+  //              } else {
+  //                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //                  content: Text("Must log in to create listings."),
+  //                ));
+  //              }
+  //            },
+  //            color: Colors.black,
+  //          ),
+  //        ),
+  //      );
+  //    },
+  //  );
+  //}
 
   @override
   Widget build(BuildContext context) {
@@ -128,19 +131,8 @@ class _LandingScreenState extends State<LandingScreen> {
                     color: Colors.black,
                   ),
                 ),
-                createClassifiedButton(),
-                Expanded(
-                  child: Card(
-                    color: Colors.blueGrey,
-                    child: FutureBuilder(
-                      future: loggedIn,
-                      initialData: false,
-                      builder: (context, AsyncSnapshot<bool> snapshot) {
-                        return checkLoginIconButtonStatus(snapshot);
-                      },
-                    ),
-                  ),
-                ),
+                CreateClassifiedbutton(),
+                const AccountButton(),
               ],
             ),
             Expanded(

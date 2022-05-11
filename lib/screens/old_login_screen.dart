@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:mariana_marketplace/landing_screen.dart';
+import 'package:mariana_marketplace/screens/landing_screen.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:mariana_marketplace/secrets.dart';
 

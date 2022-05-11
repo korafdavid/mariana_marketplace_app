@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mariana_marketplace/api_calls.dart';
-import 'package:mariana_marketplace/login_screen.dart';
-import 'package:mariana_marketplace/sign_up_screen.dart';
+import 'package:mariana_marketplace/screens/login_screen.dart';
+import 'package:mariana_marketplace/screens/sign_up_screen.dart';
 import 'package:appwrite/models.dart';
+import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
+import 'package:mariana_marketplace/screens/landing_screen.dart';
 
 class AccountScreen extends StatefulWidget {
   AccountScreen({Key? key}) : super(key: key);
@@ -24,7 +26,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Widget loggedInUserInfo() {
     return FutureBuilder(
-      future: loggedInUser,
+      future: context.authNotifier.account.get(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           DateTime registrationdate =
@@ -72,7 +74,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Widget currentSessionInfo() {
     return FutureBuilder(
-      future: currentSession,
+      future: context.authNotifier.account.getSession(sessionId: 'current'),
       builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           debugPrint("Snapshot Data: " + snapshot.data.toString());
@@ -149,15 +151,22 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Widget logoutButton() {
     return ElevatedButton(
-      onPressed: () {
-        // Validate returns true if the form is valid, or false otherwise.
+        onPressed: () async {
+          // Validate returns true if the form is valid, or false otherwise.
+          if (!await context.authNotifier.deleteSession()) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(context.authNotifier.error ?? "Unknown error")));
+          }
 
-        setState(() {
-          loggingOutUser = deleteCurrentSession();
-        });
-      },
-      child: logoutButtonText(loggingOutUser),
-    );
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => LandingScreen()));
+
+          setState(() {
+            //loggingOutUser = deleteCurrentSession();
+          });
+        },
+        child: Text("Logout") //logoutButtonText(loggingOutUser),
+        );
   }
 
   @override

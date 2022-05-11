@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:mariana_marketplace/api_calls.dart';
-import 'package:mariana_marketplace/landing_screen.dart';
+import 'package:mariana_marketplace/screens/landing_screen.dart';
 import 'package:intl/intl.dart';
 
 class SignUpForm extends StatefulWidget {

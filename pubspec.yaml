@@ -31,6 +31,9 @@ dependencies:
   infinite_scroll_pagination: ^3.1.0
   flutter:
     sdk: flutter
+  appwrite_auth_kit:
+    git: https://github.com/lohanidamodar/appwrite_auth_kit
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -41,6 +44,7 @@ dependencies:
   intl: ^0.17.0
   carousel_slider: ^4.1.1
   provider: ^6.0.2
+  shared_preferences: ^2.0.14
 
 dev_dependencies:
   flutter_test:
