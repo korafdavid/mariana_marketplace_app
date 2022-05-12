@@ -32,6 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
         future: signingUp,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
+            debugPrint("Status of loggingInButton after done: " +
+                snapshot.data.toString());
             int seconds = 2;
             Future.delayed(
               Duration(seconds: seconds),
@@ -39,10 +41,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 debugPrint(
                     "Logged in, moving to landing after $seconds seconds.");
                 //Move after sign up
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LandingScreen()),
-                );
+                //Navigator.pushReplacement(
+                //  context,
+                //  MaterialPageRoute(builder: (context) => LandingScreen()),
+                //);
               }),
             );
             return const Text("Finished");
@@ -115,23 +117,38 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (_formKey.currentState!.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
-
                     _formKey.currentState?.save();
-
-                    setState(() {
-                      //loggingInUser = loginUserAccount(email, password);
-                    });
 
                     if (!await context.authNotifier
                         .createSession(email: email, password: password)) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
                               context.authNotifier.error ?? "Unknown error")));
+                    } else {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text("Logged In")));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LandingScreen()));
                     }
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LandingScreen()));
+
+                    setState(() {
+                      //loggingInUser = loginUserAccount(email, password);
+                      //loggingInUser = context.authNotifier.account
+                      //    .createSession(email: email, password: password);
+                    });
+
+                    // if (!await context.authNotifier
+                    //     .createSession(email: email, password: password)) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //       content: Text(
+                    //           context.authNotifier.error ?? "Unknown error")));
+                    // }
+                    // Navigator.pushReplacement(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => LandingScreen()));
 
                     //If you want immidiate screen switch after clicking submit:
                     //Navigator.of(context).pushReplacement(MaterialPageRoute(

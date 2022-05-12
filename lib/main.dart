@@ -4,6 +4,7 @@ import 'secrets.dart';
 import 'screens/landing_screen.dart';
 import 'package:mariana_marketplace/api_calls.dart';
 import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
+import 'appwrite_client.dart';
 
 //Client appwriteClient = Client();
 
@@ -25,11 +26,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     //initialize your client
-    client = Client();
-    client
-        .setEndpoint(appwriteEndpoint)
-        .setProject(appwriteProjectID)
-        .setSelfSigned();
+    client = AppwriteClient.client;
   }
 
   @override

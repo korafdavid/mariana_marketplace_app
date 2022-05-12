@@ -1,7 +1,7 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:mariana_marketplace/secrets.dart';
+import 'secrets.dart';
 
-class ApiClient {
+class AppwriteClient {
   Client get _client {
     Client client = Client();
 
@@ -13,11 +13,12 @@ class ApiClient {
     return client;
   }
 
+  static Client get client => _instance._client;
   static Account get account => Account(_instance._client);
   static Database get database => Database(_instance._client);
   static Storage get storage => Storage(_instance._client);
 
-  static final ApiClient _instance = ApiClient._internal();
-  ApiClient._internal();
-  factory ApiClient() => _instance;
+  static final AppwriteClient _instance = AppwriteClient._internal();
+  AppwriteClient._internal();
+  factory AppwriteClient() => _instance;
 }

@@ -301,6 +301,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
                     setState(() {
                       signingUpUser = signupUser(
+                          context,
                           firstname,
                           lastname,
                           email,

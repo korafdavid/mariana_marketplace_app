@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:mariana_marketplace/api_calls.dart';
 import 'package:mariana_marketplace/screens/landing_screen.dart';
+import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
 
 class CreateClassifiedScreen extends StatefulWidget {
   CreateClassifiedScreen({Key? key}) : super(key: key);
@@ -87,6 +88,8 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
         future: uploadingClassified,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
+            debugPrint("Uploading classified status after done: " +
+                snapshot.toString());
             int seconds = 2;
             Future.delayed(
               Duration(seconds: seconds),
@@ -112,6 +115,7 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authNotifier = context.authNotifier;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -280,6 +284,7 @@ class _CreateClassifiedScreenState extends State<CreateClassifiedScreen> {
 
                     setState(() {
                       uploadingClassified = createClassified(
+                          context,
                           title,
                           price,
                           description,

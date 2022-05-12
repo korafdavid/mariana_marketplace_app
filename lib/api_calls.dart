@@ -3,20 +3,29 @@ import 'dart:typed_data';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mariana_marketplace/screens/old_login_screen.dart';
 import 'package:mariana_marketplace/secrets.dart';
 import 'package:flutter/material.dart';
+import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
 
-Client client = Client();
-Account account = Account(client);
-Storage storage = Storage(client);
-Database database = Database(client);
+//Client client = Client();
+//Account account = Account(client);
+//Storage storage = Storage(client);
+//Database database = Database(client);
+
+import 'appwrite_client.dart';
+
+Client client = AppwriteClient.client;
+Account account = AppwriteClient.account;
+Storage storage = AppwriteClient.storage;
+Database database = AppwriteClient.database;
 
 // Get future bool with login status
 Future<bool> getLoggedIn() async {
-  client
-          .setEndpoint(appwriteEndpoint) // Your API Endpoint
-          .setProject(appwriteProjectID) // Your project ID
-      ;
+  //client
+  //        .setEndpoint(appwriteEndpoint) // Your API Endpoint
+  //        .setProject(appwriteProjectID) // Your project ID
+  //    ;
 
   try {
     User result = await account.get();
@@ -30,10 +39,10 @@ Future<bool> getLoggedIn() async {
 
 // Get currently logged in user
 Future<User?> getLoggedInUser() async {
-  client
-          .setEndpoint(appwriteEndpoint) // Your API Endpoint
-          .setProject(appwriteProjectID) // Your project ID
-      ;
+  //client
+  //        .setEndpoint(appwriteEndpoint) // Your API Endpoint
+  //        .setProject(appwriteProjectID) // Your project ID
+  //    ;
 
   try {
     return account.get();
@@ -47,6 +56,7 @@ Future<User?> getLoggedInUser() async {
 
 // Stuff from sign in screen
 Future<String?> signupUser(
+    BuildContext context,
     String firstname,
     String lastname,
     String email,
@@ -67,7 +77,7 @@ Future<String?> signupUser(
     User signedUpUser = await registerUserAccount(fullName, email, password);
     debugPrint("1 signedUpUser");
     //Create session
-    Session createdSession = await loginUserAccount(email, password);
+    Session createdSession = await loginUserAccount(context, email, password);
     debugPrint("2 createdSession");
     //Update user account name
     User updatedAccountNameAccount = await updateAccountName(fullName);
@@ -110,11 +120,15 @@ Future<User> registerUserAccount(
   //});
 }
 
-Future<Session> loginUserAccount(String anEmail, String anPassword) {
-  Future<Session> result = account.createSession(
-    email: anEmail,
-    password: anPassword,
-  );
+Future<Session> loginUserAccount(
+    BuildContext context, String anEmail, String anPassword) {
+  //Future<Session> result = account.createSession(
+  //  email: anEmail,
+  //  password: anPassword,
+  //);
+
+  Future<Session> result = context.authNotifier.account
+      .createSession(email: anEmail, password: anPassword);
 
   debugPrint("Attempting user login with email: $anEmail");
 
@@ -204,8 +218,10 @@ Future<Session?> getCurrentSession() {
   return result;
 }
 
-Future deleteCurrentSession() {
-  Future result = account.deleteSession(sessionId: 'current');
+Future deleteCurrentSession(BuildContext context) {
+  //Future result = account.deleteSession(sessionId: 'current');
+  Future result =
+      context.authNotifier.account.deleteSession(sessionId: 'current');
   return result;
 }
 
@@ -233,10 +249,10 @@ Future<List<File>> uploadImages(List<XFile> imageFiles) async {
   List<File> returnFileList = [];
   List<String> returnFileStringList = [];
 
-  client
-          .setEndpoint(appwriteEndpoint) // Your API Endpoint
-          .setProject(appwriteProjectID) // Your project ID
-      ;
+  //client
+  //        .setEndpoint(appwriteEndpoint) // Your API Endpoint
+  //        .setProject(appwriteProjectID) // Your project ID
+  //    ;
 
   await Future.wait(imageFiles.map((item) async {
     File finalItem = await uploadSingleImage(item);
@@ -268,8 +284,14 @@ Future<List<File>> uploadImages(List<XFile> imageFiles) async {
   return returnFileList;
 }
 
-Future<Document> createClassified(String name, String price, String description,
-    String condition, String category, List<XFile> imageFiles) async {
+Future<Document> createClassified(
+    BuildContext context,
+    String name,
+    String price,
+    String description,
+    String condition,
+    String category,
+    List<XFile> imageFiles) async {
   List<File> uploadedImages = await uploadImages(imageFiles);
   List<String> classifiedImagesList = [];
 
@@ -283,17 +305,19 @@ Future<Document> createClassified(String name, String price, String description,
   debugPrint(
       "Full classifiedImagesList String: " + classifiedImagesList.toString());
 
-  Client client = Client();
+  //Client client = Client();
+//
+  //client
+  //        .setEndpoint(appwriteEndpoint) // Your API Endpoint
+  //        .setProject(appwriteProjectID) // Your project ID
+  //    ;
 
-  client
-          .setEndpoint(appwriteEndpoint) // Your API Endpoint
-          .setProject(appwriteProjectID) // Your project ID
-      ;
+  //User? currentUser = await getLoggedInUser();
 
-  User? currentUser = await getLoggedInUser();
+  User? currentUser = await context.authNotifier.account.get();
 
   debugPrint("account_id: " +
-      currentUser!.$id +
+      currentUser.$id +
       "\n" +
       "name: " +
       name +
@@ -336,9 +360,10 @@ Future<Document> createClassified(String name, String price, String description,
 
 Future<DocumentList?> getAccountFavorites() async {
   try {
-    User? myUser = await getLoggedInUser();
+    //User? myUser = await getLoggedInUser();
+    User myUser = await account.get();
     Future<DocumentList> returnList = getAllCollectionDocuments(
-        userFavoritesCollectionID, [Query.equal("user_id", myUser?.$id)]);
+        userFavoritesCollectionID, [Query.equal("user_id", myUser.$id)]);
     return returnList;
   } catch (e) {
     debugPrint("Error during getAccountFavorites: $e");
@@ -441,10 +466,10 @@ Future<Uint8List?> getFilePreview(
 
 Future<Document?> createUserFavorite(
     String classifiedID, String classifiedType) async {
-  client
-          .setEndpoint(appwriteEndpoint) // Your API Endpoint
-          .setProject(appwriteProjectID) // Your project ID
-      ;
+  //client
+  //        .setEndpoint(appwriteEndpoint) // Your API Endpoint
+  //        .setProject(appwriteProjectID) // Your project ID
+  //    ;
 
   try {
     //Wait for logged in user
