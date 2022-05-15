@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:mariana_marketplace/secrets.dart';
-import 'package:mariana_marketplace/old_login_screen.dart';
+import 'package:mariana_marketplace/views/old_login_screen.dart';
 import 'package:appwrite/appwrite.dart';
 
 class CarScreen extends StatefulWidget {
@@ -59,6 +59,7 @@ class _CarScreenState extends State<CarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Test Screen'),
         // actions: [
         //   IconButton(
@@ -78,13 +79,9 @@ class _CarScreenState extends State<CarScreen> {
       future: getClassifiedsList(),
       builder: (context, AsyncSnapshot snapshot) {
         if (!snapshot.hasData) {
-          if (!Platform.isIOS) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return const Center(child: CupertinoActivityIndicator());
-          }
+          return Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
         } else {
           return ListView.builder(
               itemCount: snapshot.data.length,

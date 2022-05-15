@@ -1,37 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:mariana_marketplace/api_calls.dart';
+import 'package:mariana_marketplace/controller/AuthState.dart';
+import 'package:mariana_marketplace/controller/api_calls.dart';
+import 'package:mariana_marketplace/controller/fav_provider.dart';
+import 'package:provider/provider.dart';
 
 class favButton extends StatefulWidget {
-  favButton(
-      {Key? key,
-      required this.favoritesFuture,
-      required this.classifiedID,
-      required this.classified_type})
-      : super(key: key);
-  final Future<DocumentList?> favoritesFuture;
+  favButton({
+    Key? key,
+    required this.isfavorite,
+    required this.classifiedID,
+    required this.classified_type,
+  }) : super(key: key);
   final String classifiedID;
+  final Future<bool> isfavorite;
   final String classified_type;
-  bool hearted = false;
 
   @override
   State<favButton> createState() => _favButtonState();
 }
 
 class _favButtonState extends State<favButton> {
-  void getIsFavorite() async {
-    DocumentList? awaitedList = await widget.favoritesFuture;
-
-    setState(() {
-      widget.hearted = isFavorite(awaitedList, widget.classifiedID);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    AuthState state = Provider.of<AuthState>(context, listen: true);
+    IconState iconState = Provider.of<IconState>(context, listen: true);
     return FutureBuilder(
-        future: widget.favoritesFuture,
+        future: widget.isfavorite,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return IconButton(
@@ -43,43 +39,26 @@ class _favButtonState extends State<favButton> {
                 },
                 icon: const Icon(Icons.refresh));
           } else {
+            state.hearted = snapshot.data ?? false;
+            debugPrint(snapshot.data.toString());
             return IconButton(
                 onPressed: () {
-                  getIsFavorite();
-                  if (widget.hearted) {
-                    deleteUserFavorite(
+                  state.togglehearted(!state.hearted);
+                  if (snapshot.data == true) {
+                    state.deleteUserFavorite(
                       widget.classifiedID,
                     );
                   } else {
-                    createUserFavorite(
+                    state.createUserFavorite(
                       widget.classifiedID,
                       widget.classified_type,
                     );
                   }
-                  setState(() {
-                    widget.hearted = !widget.hearted;
-                  });
                 },
-                icon: widget.hearted
+                icon: state.hearted
                     ? Icon(Icons.favorite)
                     : Icon(Icons.favorite_border));
           }
         });
-  }
-
-  bool isFavorite(DocumentList? favoritesList, String classifiedID) {
-    if (favoritesList != null) {
-      for (var v in favoritesList.documents) {
-        if (v.data["classified_id"] == classifiedID) {
-          debugPrint(
-              "Checking " + v.data["classified_id"] + " == " + classifiedID);
-          return true;
-        }
-      }
-    } else {
-      debugPrint("favoritesList was null");
-    }
-
-    return false;
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mariana_marketplace/api_calls.dart';
-import 'package:mariana_marketplace/login_screen.dart';
-import 'package:mariana_marketplace/sign_up_screen.dart';
+import 'package:mariana_marketplace/views/login_screen.dart';
+import 'package:mariana_marketplace/views/sign_up_screen.dart';
 
 class loginOrSignupScreen extends StatefulWidget {
   loginOrSignupScreen({Key? key}) : super(key: key);

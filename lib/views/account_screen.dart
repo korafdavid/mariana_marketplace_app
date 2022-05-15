@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mariana_marketplace/api_calls.dart';
-import 'package:mariana_marketplace/login_screen.dart';
-import 'package:mariana_marketplace/sign_up_screen.dart';
+import 'package:mariana_marketplace/controller/api_calls.dart';
+import 'package:mariana_marketplace/views/login_screen.dart';
+import 'package:mariana_marketplace/views/sign_up_screen.dart';
 import 'package:appwrite/models.dart';
+import 'package:mariana_marketplace/controller/AuthState.dart';
+import 'package:provider/provider.dart';
 
 class AccountScreen extends StatefulWidget {
   AccountScreen({Key? key}) : super(key: key);
@@ -13,16 +15,15 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  Future<User?> loggedInUser = getLoggedInUser();
-  Future<Session?> currentSession = getCurrentSession();
-
-  Future? loggingOutUser;
+  Future<User?>? loggedInUser;
+  Future<Session?>? session;
 
   DateTime dateTimeFromUnix(int UnixTimeStamp) {
     return DateTime.fromMillisecondsSinceEpoch(UnixTimeStamp * 1000);
   }
 
-  Widget loggedInUserInfo() {
+  Widget loggedInUserInfo(AuthState state) {
+    loggedInUser = state.getLoggedIn();
     return FutureBuilder(
       future: loggedInUser,
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
@@ -70,9 +71,10 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  Widget currentSessionInfo() {
+  Widget currentSessionInfo(AuthState state) {
+    session = state.getCurrentSession();
     return FutureBuilder(
-      future: currentSession,
+      future: session,
       builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           debugPrint("Snapshot Data: " + snapshot.data.toString());
@@ -116,62 +118,30 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  //Widget for submit button + loading indicator
-  Widget? logoutButtonText(Future? loggingOut) {
-    if (loggingOut != null) {
-      return FutureBuilder(
-        future: loggingOut,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            int seconds = 5;
-            Future WaitTwoSecs = Future.delayed(
-              Duration(seconds: seconds),
-              (() async {}),
-            );
-
-            //Do the stuff after waiting two seconds.
-            WaitTwoSecs.then((value) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Logged out.')),
-              );
-              Navigator.pop(context);
-            });
-
-            return const Text("Logged out, exiting.");
-          } else {
-            return const Text("Logging out, please wait.");
-          }
-        },
-      );
-    }
-    return const Text("Log Out");
-  }
-
-  Widget logoutButton() {
+  Widget logoutButton(AuthState state) {
     return ElevatedButton(
       onPressed: () {
-        // Validate returns true if the form is valid, or false otherwise.
-
-        setState(() {
-          loggingOutUser = deleteCurrentSession();
-        });
+        state.deleteCurrentSession(context);
       },
-      child: logoutButtonText(loggingOutUser),
+      child: Text(state.logOutDetail),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    AuthState state = Provider.of<AuthState>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         title: Text("Mariana Marketplace"),
       ),
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [loggedInUserInfo(), currentSessionInfo(), logoutButton()],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          loggedInUserInfo(state),
+          currentSessionInfo(state),
+          logoutButton(state)
+        ],
       ),
     );
   }

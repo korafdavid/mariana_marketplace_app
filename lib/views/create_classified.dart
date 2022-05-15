@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:appwrite/appwrite.dart';
-import 'package:mariana_marketplace/api_calls.dart';
-import 'package:mariana_marketplace/landing_screen.dart';
+import 'package:mariana_marketplace/controller/api_calls.dart';
+import 'package:mariana_marketplace/views/landing_screen.dart';
 
 class CreateClassifiedScreen extends StatefulWidget {
   CreateClassifiedScreen({Key? key}) : super(key: key);

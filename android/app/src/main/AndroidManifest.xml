@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.evotecc.mariana_marketplace">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="mariana_marketplace"
         android:name="${applicationName}"

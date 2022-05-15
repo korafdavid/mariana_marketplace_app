@@ -1,13 +1,11 @@
-import 'dart:io';
-
 import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:mariana_marketplace/landing_screen.dart';
+import 'package:mariana_marketplace/views/landing_screen.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:mariana_marketplace/secrets.dart';
 
-import 'package:mariana_marketplace/api_calls.dart';
+import 'package:mariana_marketplace/controller/api_calls.dart';
 
 const users = const {
   'dribbble@gmail.com': '12345',
@@ -42,24 +40,25 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
-  Future<String?> _signupWrapper(SignupData data) async {
-    try {
-      return signupUser(
-          data.additionalSignupData?["firstname"] ?? "Missing",
-          data.additionalSignupData?["lastname"] ?? "Missing",
-          data.name ?? "Missing",
-          data.password ?? "Missing",
-          data.additionalSignupData?["phone"] ?? "Missing",
-          data.additionalSignupData?["birthday"] ?? "Missing",
-          data.additionalSignupData?["address"] ?? "Missing",
-          data.additionalSignupData?["island"] ?? "Missing");
-    } catch (e) {
-      final String errorString =
-          "Did not complete user signup fully, error: " + e.toString();
-      debugPrint(errorString);
-      return "Could not complete user signup";
-    }
-  }
+  // Future<String?> _signupWrapper(BuildContext context, SignupData data) async {
+  //   try {
+  //     return signupUser(
+  //       context,
+  //         data.additionalSignupData?["firstname"] ?? "Missing",
+  //         data.additionalSignupData?["lastname"] ?? "Missing",
+  //         data.name ?? "Missing",
+  //         data.password ?? "Missing",
+  //         data.additionalSignupData?["phone"] ?? "Missing",
+  //         data.additionalSignupData?["birthday"] ?? "Missing",
+  //         data.additionalSignupData?["address"] ?? "Missing",
+  //         data.additionalSignupData?["island"] ?? "Missing");
+  //   } catch (e) {
+  //     final String errorString =
+  //         "Did not complete user signup fully, error: " + e.toString();
+  //     debugPrint(errorString);
+  //     return "Could not complete user signup";
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +72,7 @@ class LoginScreen extends StatelessWidget {
         //logo: AssetImage('assets/images/ecorp-lightblue.png'),
 
         onLogin: _authUser,
-        onSignup: _signupWrapper,
+       // onSignup: _signupWrapper,
         onSubmitAnimationCompleted: () {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => const LandingScreen(),

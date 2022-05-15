@@ -1,10 +1,11 @@
 import 'dart:typed_data';
-
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mariana_marketplace/controller/AuthState.dart';
 import 'package:mariana_marketplace/secrets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 Client client = Client();
 Account account = Account(client);
@@ -12,12 +13,16 @@ Storage storage = Storage(client);
 Database database = Database(client);
 
 // Get future bool with login status
-Future<bool> getLoggedIn() async {
-  client
-          .setEndpoint(appwriteEndpoint) // Your API Endpoint
-          .setProject(appwriteProjectID) // Your project ID
-      ;
 
+class Network {
+ late AuthState state;
+  init(BuildContext context){
+    state =  Provider.of<AuthState>(context, listen: true);
+  }
+}
+
+Future<bool> getLoggedIn() async {
+  client.setEndpoint(appwriteEndpoint).setProject(appwriteProjectID);
   try {
     User result = await account.get();
     debugPrint("User logged in: " + result.name);
@@ -45,79 +50,27 @@ Future<User?> getLoggedInUser() async {
   }
 }
 
-// Stuff from sign in screen
-Future<String?> signupUser(
-    String firstname,
-    String lastname,
-    String email,
-    String password,
-    String phone,
-    String birthday,
-    String address,
-    String island) async {
-  //Concat fullname
-  final String fullName = ((firstname) + " " + (lastname));
-
-  debugPrint(
-      "Attempting signupUser with values: firstname: $firstname, birthday: $birthday");
-
+Future<User> registerUserAccount(
+    String fullname, String anEmail, String password) {
   try {
-    debugPrint("0 startingSignup");
-    //Sign up user
-    User signedUpUser = await registerUserAccount(fullName, email, password);
-    debugPrint("1 signedUpUser");
-    //Create session
-    Session createdSession = await loginUserAccount(email, password);
-    debugPrint("2 createdSession");
-    //Update user account name
-    User updatedAccountNameAccount = await updateAccountName(fullName);
-    debugPrint("3 updatedAccountNameAccount");
-    //Create database entry for user
-    Document userInfoDocument = await createUserInfoEntry(signedUpUser.$id,
-        firstname, lastname, email, phone, birthday, address, island);
-    debugPrint("4 userInfoDocument");
-    //Update user prefs
-    User updatedUser = await updateUserPrefs(
-        firstname, lastname, email, phone, birthday, address, island);
-    debugPrint("5 updatedUserPrefs");
-
-    //Everything successfully completed above, return null so caller knows we succeeded
-    return null;
-  } catch (e) {
-    final String errorString =
-        "Did not complete user signup fully, error: " + e.toString();
-    debugPrint(errorString);
-    return "Could not complete user signup";
+    Future<User> result = account.create(
+      userId: 'unique()',
+      email: anEmail,
+      password: password,
+    );
+    return result;
+  } on AppwriteException catch (e) {
+    print(e);
+    throw '';
   }
 }
 
-Future<User> registerUserAccount(
-    String fullname, String anEmail, String password) {
-  Future<User> result = account.create(
-    userId: 'unique()',
-    email: anEmail,
-    password: password,
-  );
-
-  return result;
-
-  //result.then((response) {
-  //  print("Response for registerUserAccount was: " + response.toString());
-  //  return response;
-  //}).catchError((error) {
-  //  print(error.response);
-  //  return error.response;
-  //});
-}
-
-Future<Session> loginUserAccount(String anEmail, String anPassword) {
-  Future<Session> result = account.createSession(
+Future<Session> loginUserAccount(String anEmail, String anPassword) async {
+  var result = await account.createSession(
     email: anEmail,
     password: anPassword,
   );
-
   debugPrint("Attempting user login with email: $anEmail");
-
   return result;
 }
 
@@ -197,12 +150,7 @@ Future<User> updateUserPrefs(
 }
 //
 
-Future<Session?> getCurrentSession() {
-  Future<Session?> result = account.getSession(
-    sessionId: 'current',
-  );
-  return result;
-}
+
 
 Future deleteCurrentSession() {
   Future result = account.deleteSession(sessionId: 'current');

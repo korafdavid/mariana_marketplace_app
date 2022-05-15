@@ -5,7 +5,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:mariana_marketplace/secrets.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
-import 'package:mariana_marketplace/api_calls.dart';
+import 'package:mariana_marketplace/controller/api_calls.dart';
 
 class ClassifiedDisplayScreen extends StatefulWidget {
   const ClassifiedDisplayScreen({Key? key, required this.classifiedID})
