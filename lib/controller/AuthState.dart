@@ -63,13 +63,11 @@ class AuthState extends ChangeNotifier {
     toggleLogOutDetails('Logging Out');
     var result = await account.deleteSession(sessionId: 'current');
     toggleAuthStatus(AuthStatus.unauthenicated);
-    Future.delayed(Duration(seconds: 2), () {
+    Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Logged out.')),
       );
-      Navigator.pop(context);
       toggleLogOutDetails('Log Out');
-    });
     return result;
   }
 
@@ -201,6 +199,7 @@ class AuthState extends ChangeNotifier {
       });
       toggleLoginStatus('Login');
       toggleAuthStatus(AuthStatus.authenicated);
+      print(authStatus.toString());
     } on AppwriteException catch (error) {
       toggleLoginStatus('Login');
       toggleAuthStatus(AuthStatus.unauthenicated);
@@ -228,36 +227,49 @@ class AuthState extends ChangeNotifier {
         "Attempting signupUser with values: firstname: $firstname, birthday: $birthday");
 
     try {
-      debugPrint("0 startingSignup");
       //Sign up user
       User signedUpUser = await registerUserAccount(fullName, email, password);
-      debugPrint("1 signedUpUser");
-      //Create session
-      Session createdSession = await loginUserAccount(email, password);
-      debugPrint("2 createdSession");
-      //Update user account name
-      User updatedAccountNameAccount = await updateAccountName(fullName);
-      debugPrint("3 updatedAccountNameAccount");
-      //Create database entry for user
-      Document userInfoDocument = await createUserInfoEntry(signedUpUser.$id,
-          firstname, lastname, email, phone, birthday, address, island);
-      debugPrint("4 userInfoDocument");
+      Session createdSession = await account.createSession(
+        email: email,
+        password: password,
+      );
+    User updatedAccountNameAccount = await  account.updateName(name: fullName);
+    Document userInfoDocument = await  database.createDocument(
+      collectionId: accountDetailsCollectionID,
+      documentId: 'unique()',
+      data: {
+        "account_id": signedUpUser.$id,
+        "name": firstname + " " + lastname,
+        "firstname": firstname,
+        "lastname": lastname,
+        "email": email,
+        "phone": phone,
+        "birthday": birthday,
+        "address": address,
+        "island": island
+      });
       //Update user prefs
-      User updatedUser = await updateUserPrefs(
-          firstname, lastname, email, phone, birthday, address, island);
-      debugPrint("5 updatedUserPrefs");
+      User updatedUser = await account.updatePrefs(
+    prefs: {
+      "firstname": firstname,
+      "lastname": lastname,
+      "email": email,
+      "phone": phone,
+      "birthday": birthday,
+      "address": address,
+      "island": island
+    },
+  );  
 
-      //Everything successfully completed above, return null so caller knows we succeeded
       toggleSignUpStatus('Successfully Signed Up please wait');
       await Future.delayed(const Duration(seconds: 2), () {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const LandingScreen()));
       });
       toggleSignUpStatus('SignUp');
-      toggleAuthStatus(AuthStatus.authenicated);
+      // debugPrint(authStatus.name);
     } on AppwriteException catch (e) {
       toggleSignUpStatus('SignUp');
-      toggleAuthStatus(AuthStatus.unauthenicated);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Could not complete user signup: ${e.message}")));
     }

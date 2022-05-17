@@ -114,7 +114,6 @@ Future<User> updateAccountName(String anName) {
   Future<User> result = account.updateName(
     name: anName,
   );
-
   return result;
 }
 

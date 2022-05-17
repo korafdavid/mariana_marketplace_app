@@ -267,11 +267,6 @@ class _SignUpFormState extends State<SignUpForm> {
                         birthday,
                         address.text,
                         islandSelectedValue);
-                  //If you want immidiate screen switch after clicking submit:
-                  //Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  //  builder: (context) => const LandingScreen(),
-                  //));
-                  // More at https://docs.flutter.dev/cookbook/forms/validation
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
