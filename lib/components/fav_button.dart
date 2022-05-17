@@ -17,15 +17,16 @@ class favButton extends StatefulWidget {
   final Future<bool> isfavorite;
   final String classified_type;
 
-  @override
+  @override 
   State<favButton> createState() => _favButtonState();
 }
+
 
 class _favButtonState extends State<favButton> {
   @override
   Widget build(BuildContext context) {
     AuthState state = Provider.of<AuthState>(context, listen: true);
-    IconState iconState = Provider.of<IconState>(context, listen: true);
+    ValueNotifier<bool> likeStatus = ValueNotifier<bool>(true);
     return FutureBuilder(
         future: widget.isfavorite,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -39,25 +40,31 @@ class _favButtonState extends State<favButton> {
                 },
                 icon: const Icon(Icons.refresh));
           } else {
-            state.hearted = snapshot.data ?? false;
+            likeStatus.value = snapshot.data ?? false;
             debugPrint(snapshot.data.toString());
-            return IconButton(
-                onPressed: () {
-                  state.togglehearted(!state.hearted);
-                  if (snapshot.data == true) {
-                    state.deleteUserFavorite(
-                      widget.classifiedID,
-                    );
-                  } else {
-                    state.createUserFavorite(
-                      widget.classifiedID,
-                      widget.classified_type,
-                    );
-                  }
-                },
-                icon: state.hearted
-                    ? Icon(Icons.favorite)
-                    : Icon(Icons.favorite_border));
+            return ValueListenableBuilder<bool>(
+                valueListenable: likeStatus,
+                builder: (context, value, child) {
+                  return IconButton(
+                      onPressed: () {
+                        likeStatus.value = !(likeStatus.value);
+
+                        if (snapshot.data == true) { 
+                          state.deleteUserFavorite(
+                            widget.classifiedID,
+                          );
+                          print('delete');
+                        } else {
+                          state.createUserFavorite(
+                            widget.classifiedID,
+                            widget.classified_type,
+                          );
+                        }
+                      },
+                      icon: value //context.watch<AuthState>().hearted
+                          ? Icon(Icons.favorite)
+                          : Icon(Icons.favorite_border));
+                });
           }
         });
   }

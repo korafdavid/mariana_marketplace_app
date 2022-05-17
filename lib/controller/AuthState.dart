@@ -16,15 +16,9 @@ class AuthState extends ChangeNotifier {
   var signUpDetail = 'Sign Up';
   var logOutDetail = 'LogOut';
   var authStatus = AuthStatus.unauthenicated;
-  bool hearted = false;
 
   AuthState() {
     _init();
-  }
-
-  void togglehearted(bool heart) {
-    hearted = heart;
-    notifyListeners();
   }
 
   void toggleLogOutDetails(String logoutDetails) {
@@ -206,9 +200,10 @@ class AuthState extends ChangeNotifier {
             MaterialPageRoute(builder: (context) => const LandingScreen()));
       });
       toggleLoginStatus('Login');
+      toggleAuthStatus(AuthStatus.authenicated);
     } on AppwriteException catch (error) {
       toggleLoginStatus('Login');
-      authStatus = AuthStatus.unauthenicated;
+      toggleAuthStatus(AuthStatus.unauthenicated);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(error.message!),
       ));
@@ -259,9 +254,10 @@ class AuthState extends ChangeNotifier {
             MaterialPageRoute(builder: (context) => const LandingScreen()));
       });
       toggleSignUpStatus('SignUp');
+      toggleAuthStatus(AuthStatus.authenicated);
     } on AppwriteException catch (e) {
       toggleSignUpStatus('SignUp');
-
+      toggleAuthStatus(AuthStatus.unauthenicated);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Could not complete user signup: ${e.message}")));
     }
